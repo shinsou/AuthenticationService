@@ -47,6 +47,9 @@ Solution service should be runnable in docker containers (linux) and it should b
 Service is served from CE based subscription in Azure (AKS) cloud. AKS (Azure Kubernetes server) was chosen for couple of reasons. As it can be manually/fully customized and it's more familiar platform for me.
 
 The dotnet runner will also run a background task, where it runs NodeJS (please verify version from webapi->dockerfile) for the admin UI (as a SPA). This is handled within the .NET code (do not touch unless you know what you're doing).
+Note! When running solution/service, it will start this background task and in this task it will run npm build task. This task may take awhile and seems to developer as unresponsive or blocked process scenario. It is not! Be patient it'll work! :angel:
+If this bothers someone, one could override the .NET method at startup : `UseReactDevelopmentServer` and implement your own with logging. :smirk:
+
 
 The `docker-compose` is build in a way where it holds all the basic stuff the service requires (cache, database, volume-share for persisted data).
 
@@ -74,6 +77,8 @@ Run
 # Known issues
 
 - Stopping debug-browser, will not stop Node-task from the background. Thus leaving the main debug process running.
+  - Note that this left ignored will not prevent a new debug instance to be ran. There's a problem tho' -> when running the background taks for SPA UI,
+    it will run in configured port (`8080`) and if the previous process is still running. It will block the new SPA service from being ran!
 - Self-Signed-Certificates may not work correctly due to new security changes (only locally).
   - This is found in VueJS runner. This is possible to fix, by creating your own node-server-proxy and configure it to use certificates.
 - `docker-compose build` event ignores environment variables, but `docker-compose up` will read them from the `docker-compose.override.yml` if defined
