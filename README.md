@@ -48,6 +48,7 @@ Service is served from CE based subscription in Azure (AKS) cloud. AKS (Azure Ku
 
 The dotnet runner will also run a background task, where it runs NodeJS (please verify version from webapi->dockerfile) for the admin UI (as a SPA). This is handled within the .NET code (do not touch unless you know what you're doing).
 Note! When running solution/service, it will start this background task and in this task it will run npm build task. This task may take awhile and seems to developer as unresponsive or blocked process scenario. It is not! Be patient it'll work! :angel:
+
 If this bothers someone, one could override the .NET method at startup : `UseReactDevelopmentServer` and implement your own with logging. :smirk:
 
 
