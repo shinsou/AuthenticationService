@@ -17,7 +17,7 @@ This is a monolith on purpose.
 ## Architecture structure
 
 The solution applies Clean Architecture where it decouples layers into projects.
-For more of Clean Architecture, I find [this blog]:https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html of it most helpfull to get the basic understanding of it: 
+For more of Clean Architecture, I find [this blog](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) of it most helpfull to get the basic understanding of it: 
 
 
 
