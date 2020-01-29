@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  authenticationservice.webapi:
+    image: auth #${DOCKER_REGISTRY-}authenticationservicewebapi
+    container_name: auth #authenticationservice
+    build:
+      context: .
+      dockerfile: AuthenticationService.WebApi/Dockerfile
