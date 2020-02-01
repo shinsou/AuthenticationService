@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace AuthenticationService.Application.Factories
 {
-    public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<User, IdentityRole>
+    public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<User, Role>
     {
         private ILogger<ApplicationUserClaimsPrincipalFactory> Logger { get; }
 
         public ApplicationUserClaimsPrincipalFactory(UserManager<User> userManager,
-                                                     RoleManager<IdentityRole> roleManager,
+                                                     RoleManager<Role> roleManager,
                                                      IOptions<IdentityOptions> optionsAccessor,
                                                      ILogger<ApplicationUserClaimsPrincipalFactory> logger)
                                                         : base(userManager, roleManager, optionsAccessor)
@@ -27,6 +27,7 @@ namespace AuthenticationService.Application.Factories
         {
             var identity = await base.GenerateClaimsAsync(user);
 
+            //#TODO
             //await SetCustomServiceClaims(identity, user);
 
             return identity;

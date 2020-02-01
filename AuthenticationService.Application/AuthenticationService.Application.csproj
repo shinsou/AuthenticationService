@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthenticationService.Core\AuthenticationService.Core.csproj" />
     <ProjectReference Include="..\AuthenticationService.Domain\AuthenticationService.Domain.csproj" />
   </ItemGroup>
 

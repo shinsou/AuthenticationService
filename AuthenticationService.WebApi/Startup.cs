@@ -35,11 +35,17 @@ namespace AuthenticationService.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            this.Logger.Information("Add {settings} configuration into services configurations", "Settings");
+            services.AddSettings(this.Configuration);
+
+            this.Logger.Information("Add {settings} configuration into services configurations", "Database");
+            services.AddDatabase(this.Configuration);
+
             //this.Logger.Information("Add {settings} configuration into services configurations", "CORS");
             //services.AddCorsConfigurations(this.Configuration);
 
-            //this.Logger.Information("Add {settings} configuration into services configurations", "Custom Services");
-            //services.AddServices(this.Configuration);
+            this.Logger.Information("Add {settings} configuration into services configurations", "Custom Services");
+            services.AddServices(this.Configuration);
 
             //this.Logger.Information("Add {settings} configuration into services configurations", "Auth");
             //services.AddAuth(this.Configuration);
