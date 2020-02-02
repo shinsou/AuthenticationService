@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Enrichers;
+using AuthenticationService.WebApi.Extensions;
 
 namespace AuthenticationService.WebApi
 {
@@ -16,7 +17,9 @@ namespace AuthenticationService.WebApi
         public static void Main(string[] args)
             => CreateHostBuilder(args)
                 .Build()
-                //.MigrateApplicationDatabase()
+                .MigrateApplicationDatabase()
+                .MigrateOperationalDatabase()
+                .ShowHostAddressInTitle()
                 .Run();
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

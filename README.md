@@ -26,7 +26,25 @@ For more of Clean Architecture, I find [this blog](https://blog.cleancoder.com/u
 
 This project is the top main layer. It's also the main running process that binds everything together.
 
-#### Application
+#### .Application
+
+#### .Persistence
+
+Serves as layer for local data storage.
+
+To create snapshots for migrations
+
+`ApplicationDb`
+```batch
+dotnet ef migrations add {snapshot_name : e.g. InitAppContext} --context ApplicationDbContext --project ./AuthenticationService.Persistence --startup-project ./AuthenticationService.WebApi -o Migrations/ApplicationDb --verbose
+```
+
+`ConfigurationDb -- Identity server`
+```batch
+dotnet ef migrations add {snapshot_name : e.g. InitConfContext} --context CustomConfigurationDbContext --project ./AuthenticationService.Persistence --startup-project ./AuthenticationService.WebApi -o Migrations/ConfigurationsDb --verbose
+```
+
+Use `--verbose` property only when you want to see all logs from migration snapshot process
 
 
 
