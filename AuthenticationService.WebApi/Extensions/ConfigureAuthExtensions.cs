@@ -69,6 +69,12 @@ namespace AuthenticationService.WebApi.Extensions
                     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddMultipleOpenIdConnect(authSettings); // allow multiple providers defined in settings => iterate and add all
 
+            services.Configure<CookieAuthenticationOptions>(opt =>
+            {
+                opt.LoginPath = new PathString("/Login");
+                opt.LogoutPath = new PathString("/Logout");
+            });
+
             return services;
         }
     }
