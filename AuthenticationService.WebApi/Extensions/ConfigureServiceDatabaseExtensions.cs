@@ -32,7 +32,7 @@ namespace AuthenticationService.WebApi.Extensions
 
             // implement DesignTimeFactory for migration builder
             services.AddSingleton<IDesignTimeDbContextFactory<ApplicationDbContext>, ConfigureApplicationDbContextFactory>();
-            services.AddSingleton<IDesignTimeDbContextFactory<ConfigurationDbContext>, ConfigureConfigurationDbContextFactory>();
+            services.AddSingleton<IDesignTimeDbContextFactory<CustomConfigurationDbContext>, ConfigureConfigurationDbContextFactory>();
 
             services.AddIdentity<User, Role>()
                     //.AddEntityFrameworkStores<ApplicationDbContext>()
