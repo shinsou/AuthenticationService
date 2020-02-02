@@ -1,4 +1,5 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
+﻿using AuthenticationService.Persistence.Contexts;
+using IdentityServer4.EntityFramework.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -7,9 +8,9 @@ using System.Text;
 
 namespace AuthenticationService.Persistence.Factories
 {
-    public class ConfigureConfigurationDbContextFactory : Microsoft.EntityFrameworkCore.Design.IDesignTimeDbContextFactory<ConfigurationDbContext>
+    public class ConfigureConfigurationDbContextFactory : Microsoft.EntityFrameworkCore.Design.IDesignTimeDbContextFactory<CustomConfigurationDbContext>
     {
-        public ConfigurationDbContext CreateDbContext(string[] args)
+        public CustomConfigurationDbContext CreateDbContext(string[] args)
         {
             var environmentName = Environment.GetEnvironmentVariable("Hosting:Environment") ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
@@ -20,12 +21,12 @@ namespace AuthenticationService.Persistence.Factories
                 .AddEnvironmentVariables()
                 .Build();
 
-            var builder = new DbContextOptionsBuilder<ConfigurationDbContext>();
+            var builder = new DbContextOptionsBuilder<CustomConfigurationDbContext>();
             var connectionString = configuration.GetValue<string>("Database:ConnectionString");
 
             builder.UseNpgsql(connectionString);
 
-            return new ConfigurationDbContext(builder.Options, new IdentityServer4.EntityFramework.Options.ConfigurationStoreOptions());
+            return new CustomConfigurationDbContext(builder.Options, new IdentityServer4.EntityFramework.Options.ConfigurationStoreOptions());
         }
     }
 }
