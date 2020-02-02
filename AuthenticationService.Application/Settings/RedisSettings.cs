@@ -14,6 +14,7 @@ namespace AuthenticationService.Application.Settings
             this.Configuration = configuration;
         }
 
-        public string ConnectionString => this.Configuration.GetValue<string>("Database:ConnectionString");
+        public string AppName => this.Configuration.GetValue<string>("Redis:AppName");
+        public string ConnectionString => this.Configuration.GetValue<string>("Redis:ConnectionString");
     }
 }
