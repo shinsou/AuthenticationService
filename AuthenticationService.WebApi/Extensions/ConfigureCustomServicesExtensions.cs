@@ -30,6 +30,7 @@ namespace AuthenticationService.WebApi.Extensions
             services.AddScoped<SignInManager<User>, SignInGateway>();
 
             services.AddScoped<IUserClaimsPrincipalFactory<User>, ApplicationUserClaimsPrincipalFactory>();
+
             return services;
         }
     }

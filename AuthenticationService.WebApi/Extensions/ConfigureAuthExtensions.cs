@@ -5,6 +5,7 @@ using IdentityServer4;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,13 +23,21 @@ namespace AuthenticationService.WebApi.Extensions
             var dbSettings = new DatabaseSettings(configuration);
             var redisSettings = new RedisSettings(configuration);
             var authSettings = new AuthenticationSettings(configuration);
-            //services.AddSession(options =>
-            //{
-            //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
-            //    options.Cookie.Name = redisSettings.AppName;
-            //    options.Cookie.HttpOnly = true;
-            //});
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = redisSettings.AppName;
+
+                // enforce use of Https (applies also to local/dev)
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+                // to comfort chrome security changes
+                options.Cookie.SameSite = SameSiteMode.Lax;
+
+                // this will elevate cookie to HttpOnly => cookie will not be visible for Javascript
+                options.Cookie.HttpOnly = true;
+            });
+
             services.AddIdentityServer(opt =>
                     {
                         opt.Events.RaiseErrorEvents = true;
