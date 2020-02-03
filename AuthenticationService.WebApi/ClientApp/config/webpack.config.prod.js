@@ -12,6 +12,7 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -280,24 +281,24 @@ module.exports = {
     // It is absolutely essential that NODE_ENV was set to production here.
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin(env.stringified),
-    // Minify the code.
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        // Disabled because of an issue with Uglify breaking seemingly valid code:
-        // https://github.com/facebookincubator/create-react-app/issues/2376
-        // Pending further investigation:
-        // https://github.com/mishoo/UglifyJS2/issues/2011
-        comparisons: false,
-      },
-      output: {
-        comments: false,
-        // Turned on because emoji and regex is not minified properly using default
-        // https://github.com/facebookincubator/create-react-app/issues/2488
-        ascii_only: true,
-      },
-      sourceMap: shouldUseSourceMap,
-    }),
+    // Minify the code. [OBSOLETE] from Webpack 4 and onwards - moved outside of plugins to optimization property
+    //new webpack.optimize.UglifyJsPlugin({
+    //  compress: {
+    //    warnings: false,
+    //    // Disabled because of an issue with Uglify breaking seemingly valid code:
+    //    // https://github.com/facebookincubator/create-react-app/issues/2376
+    //    // Pending further investigation:
+    //    // https://github.com/mishoo/UglifyJS2/issues/2011
+    //    comparisons: false,
+    //  },
+    //  output: {
+    //    comments: false,
+    //    // Turned on because emoji and regex is not minified properly using default
+    //    // https://github.com/facebookincubator/create-react-app/issues/2488
+    //    ascii_only: true,
+    //  },
+    //  sourceMap: shouldUseSourceMap,
+    //}),
     // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
     new ExtractTextPlugin({
       filename: cssFilename,
@@ -345,6 +346,27 @@ module.exports = {
     // You can remove this if you don't use Moment.js:
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
+  optimization: {
+      minimizer: [
+          new UglifyJsPlugin({
+              output: {
+                comments: false,
+                // Turned on because emoji and regex is not minified properly using default
+                // https://github.com/facebookincubator/create-react-app/issues/2488
+                ascii_only: true,
+              },
+              sourceMap: shouldUseSourceMap,
+              compress: {
+                warnings: false,
+                // Disabled because of an issue with Uglify breaking seemingly valid code:
+                // https://github.com/facebookincubator/create-react-app/issues/2376
+                // Pending further investigation:
+                // https://github.com/mishoo/UglifyJS2/issues/2011
+                comparisons: false,
+              },
+          }),
+      ],
+  },
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
   node: {
