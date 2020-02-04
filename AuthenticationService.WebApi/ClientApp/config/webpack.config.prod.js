@@ -4,7 +4,8 @@ const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+//const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
@@ -169,44 +170,83 @@ module.exports = {
           // in the main CSS file.
           {
             test: /\.css$/,
-            loader: ExtractTextPlugin.extract(
-              Object.assign(
-                {
-                  fallback: require.resolve('style-loader'),
-                  use: [
-                    {
-                      loader: require.resolve('css-loader'),
-                      options: {
-                        importLoaders: 1,
-                        minimize: true,
-                        sourceMap: shouldUseSourceMap,
-                      },
-                    },
-                    {
-                      loader: require.resolve('postcss-loader'),
-                      options: {
-                        // Necessary for external CSS imports to work
-                        // https://github.com/facebookincubator/create-react-app/issues/2677
-                        ident: 'postcss',
-                        plugins: () => [
-                          require('postcss-flexbugs-fixes'),
-                          autoprefixer({
-                            browsers: [
-                              '>1%',
-                              'last 4 versions',
-                              'Firefox ESR',
-                              'not ie < 9', // React doesn't support IE8 anyway
-                            ],
-                            flexbox: 'no-2009',
-                          }),
-                        ],
-                      },
-                    },
-                  ],
-                },
-                extractTextPluginOptions
-              )
-            ),
+            //fallback: require.resolve('style-loader'),
+            use: [
+              {
+                loader: MiniCssExtractPlugin.loader,
+                options: {
+                  publicPath: Array(cssFilename.split('/').length).join('../')
+                }
+              },
+              // {
+              //   loader: require.resolve('css-loader'),
+              //   options: {
+              //     importLoaders: 1,
+              //     minimize: true,
+              //     sourceMap: shouldUseSourceMap,
+              //   },
+              // },
+              // {
+              //   loader: require.resolve('postcss-loader'),
+              //   options: {
+              //     // Necessary for external CSS imports to work
+              //     // https://github.com/facebookincubator/create-react-app/issues/2677
+              //     ident: 'postcss',
+              //     plugins: () => [
+              //       require('postcss-flexbugs-fixes'),
+              //       autoprefixer({
+              //         browsers: [
+              //           '>1%',
+              //           'last 4 versions',
+              //           'Firefox ESR',
+              //           'not ie < 9', // React doesn't support IE8 anyway
+              //         ],
+              //         flexbox: 'no-2009',
+              //       }),
+              //     ],
+              //   },
+              // },
+              'css-loader',
+            ],
+            // test: /\.css$/,
+            // loader: ExtractTextPlugin.extract(
+            //   Object.assign(
+            //     {
+            //       fallback: require.resolve('style-loader'),
+            //       use: [
+            //         {
+            //           loader: require.resolve('css-loader'),
+            //           options: {
+            //             importLoaders: 1,
+            //             minimize: true,
+            //             sourceMap: shouldUseSourceMap,
+            //           },
+            //         },
+            //         {
+            //           loader: require.resolve('postcss-loader'),
+            //           options: {
+            //             // Necessary for external CSS imports to work
+            //             // https://github.com/facebookincubator/create-react-app/issues/2677
+            //             ident: 'postcss',
+            //             plugins: () => [
+            //               require('postcss-flexbugs-fixes'),
+            //               autoprefixer({
+            //                 browsers: [
+            //                   '>1%',
+            //                   'last 4 versions',
+            //                   'Firefox ESR',
+            //                   'not ie < 9', // React doesn't support IE8 anyway
+            //                 ],
+            //                 flexbox: 'no-2009',
+            //               }),
+            //             ],
+            //           },
+            //         },
+            //       ],
+            //     },
+            //     extractTextPluginOptions
+            //   )
+            // ),
             // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
           },
           {
@@ -258,7 +298,7 @@ module.exports = {
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     // In production, it will be an empty string unless you specify "homepage"
     // in `package.json`, in which case it will be the pathname of that URL.
-    new InterpolateHtmlPlugin(env.raw),
+    new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: true,
@@ -300,8 +340,15 @@ module.exports = {
     //  sourceMap: shouldUseSourceMap,
     //}),
     // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
-    new ExtractTextPlugin({
+    // new ExtractTextPlugin({
+    //   filename: cssFilename,
+    // }),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // all options are optional
       filename: cssFilename,
+      //chunkFilename: '[id].css',
+      //ignoreOrder: false, // Enable to remove warnings about conflicting order
     }),
     // Generate a manifest file which contains a mapping of all asset filenames
     // to their corresponding output file so that tools can pick it up without
@@ -349,6 +396,7 @@ module.exports = {
   optimization: {
       minimizer: [
           new UglifyJsPlugin({
+            uglifyOptions: {
               output: {
                 comments: false,
                 // Turned on because emoji and regex is not minified properly using default
@@ -356,14 +404,16 @@ module.exports = {
                 ascii_only: true,
               },
               sourceMap: shouldUseSourceMap,
+              warnings: false,
               compress: {
-                warnings: false,
+                
                 // Disabled because of an issue with Uglify breaking seemingly valid code:
                 // https://github.com/facebookincubator/create-react-app/issues/2376
                 // Pending further investigation:
                 // https://github.com/mishoo/UglifyJS2/issues/2011
                 comparisons: false,
               },
+            }
           }),
       ],
   },
