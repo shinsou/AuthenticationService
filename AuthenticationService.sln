@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService.Core"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BB8B517D-5410-46DC-BFCE-C8CCCFD20991}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationService.SpaServices", "AuthenticationService.SpaServices\AuthenticationService.SpaServices.csproj", "{038CC00C-33D8-43F2-922D-BFF3F2560465}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationService.SpaServices", "AuthenticationService.SpaServices\AuthenticationService.SpaServices.csproj", "{038CC00C-33D8-43F2-922D-BFF3F2560465}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{3820BB39-D792-4B5E-A115-4B03C47A31EF}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,7 +25,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		README.md = README.md
 	EndProjectSection
 EndProject
-
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
