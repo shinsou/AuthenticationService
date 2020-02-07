@@ -19,7 +19,9 @@ namespace AuthenticationService.WebApi.Extensions
                 {
                         builder.WithOrigins("https://localhost:5001",
                                             "http://localhost:5000",
-                                            "http://localhost:8080")
+                                            "http://localhost:3000",
+                                            "https://capsule-auth.azurewebsites.net/",
+                                            "http://capsule-auth.azurewebsites.net/")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                 });

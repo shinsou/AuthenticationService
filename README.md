@@ -98,7 +98,7 @@ Run
 
 - Stopping debug-browser, will not stop Node-task from the background. Thus leaving the main debug process running.
   - Note that this left ignored will not prevent a new debug instance to be ran. There's a problem tho' -> when running the background taks for SPA UI,
-    it will run in configured port (`8080`) and if the previous process is still running. It will block the new SPA service from being ran!
+    it will run in configured port (`3000`) and if the previous process is still running. It will block the new SPA service from being ran!
 - Self-Signed-Certificates may not work correctly due to new security changes (only locally).
   - This is found in VueJS runner. This is possible to fix, by creating your own node-server-proxy and configure it to use certificates.
 - `docker-compose build` event ignores environment variables, but `docker-compose up` will read them from the `docker-compose.override.yml` if defined
