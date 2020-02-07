@@ -12,7 +12,7 @@ namespace AuthenticationService.SpaServices
 {
     public static class SpaDevelopmentServerExtensions
     {
-        public static void UseSpaDevelopmentServer(this ISpaBuilder builder, string npmScript, string pkcMgrCommand = "npm", string npmArguments = "", string schema = "http", int port = 8080)
+        public static void UseSpaDevelopmentServer(this ISpaBuilder builder, string npmScript, string pkcMgrCommand = "npm", string npmArguments = "", string schema = "http", int port = 3000)
         {
             if (builder == null)
             {

@@ -2,8 +2,11 @@ version: '3.4'
 
 services:
   authenticationservice.webapi:
-    image: auth #${DOCKER_REGISTRY-}authenticationservicewebapi
-    container_name: auth #authenticationservice
+    image: authenticationservice
+    container_name: authenticationservice
     build:
       context: .
       dockerfile: AuthenticationService.WebApi/Dockerfile
+    ports:
+      - "80:80"
+      - "2222:2222" # Azure SSH requires port 2222 to be open for webssh if used; remove if unnecessary

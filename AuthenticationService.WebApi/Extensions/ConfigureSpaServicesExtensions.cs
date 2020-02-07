@@ -13,7 +13,7 @@ namespace AuthenticationService.WebApi.Extensions
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp/";
+                configuration.RootPath = "ClientApp/build";
             });
 
             return services;
