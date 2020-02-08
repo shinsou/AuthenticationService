@@ -1,5 +1,9 @@
 # Overview
 
+### Status
+
+![Image of Yaktocat](https://dev.azure.com/jessicasotkasiira/authservice/_apis/build/status/capsule-auth%20-%20CI?branchName=master)
+
 ## NOTE! 
 #### :godmode:  Project is currently under construction and is not ready for use.
 
