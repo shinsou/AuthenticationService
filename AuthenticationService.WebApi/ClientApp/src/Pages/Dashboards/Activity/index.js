@@ -133,7 +133,7 @@ export default class ActivityDashboard extends Component {
                                                                 </div>
                                                             </div>
                                                             <div className="widget-content-left flex2">
-                                                                <div className="widget-heading">Ruben Tillman</div>
+                                                                <div className="widget-heading">El Test</div>
                                                                 <div className="widget-subheading opacity-7">Big company #2</div>
                                                             </div>
                                                         </div>
@@ -158,7 +158,7 @@ export default class ActivityDashboard extends Component {
                                                                 </div>
                                                             </div>
                                                             <div className="widget-content-left flex2">
-                                                                <div className="widget-heading">Elliot Huber</div>
+                                                                <div className="widget-heading">La Test</div>
                                                                 <div className="widget-subheading opacity-7">Big company #3</div>
                                                             </div>
                                                         </div>
@@ -182,7 +182,7 @@ export default class ActivityDashboard extends Component {
                                                                     <img width={40} className="rounded-circle" src={avatar1} alt="Avatar" /></div>
                                                             </div>
                                                             <div className="widget-content-left flex2">
-                                                                <div className="widget-heading">Vinnie Wagstaff</div>
+                                                                <div className="widget-heading">Te-su-to</div>
                                                                 <div className="widget-subheading opacity-7">Big company #4</div>
                                                             </div>
                                                         </div>
