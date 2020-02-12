@@ -49,9 +49,10 @@ const navSections = [
 class SidebarItem extends Component {
     constructor(props){
         super(props);
-
+        
         this.state = {
-            isOpen: false,
+            isCollapsable: props.content && props.content.length > 0,
+            isOpen: this.setCollapsableState(props),
             node: props
         }
 
@@ -63,41 +64,73 @@ class SidebarItem extends Component {
         return window.location.pathname.indexOf(routeName) > -1 ? true : false;    
     }
 
-    handleClick(){
-        this.setState({ isOpen: !this.state.isOpen });
+    setCollapsableState(node)
+    {
+        let isCollapsable = node.content && node.content.length > 0;
+        var result = isCollapsable && this.recursiveFindPath(node);
+        
+        return result;
+    }
+
+    recursiveFindPath(node)
+    {
+        if (this.activeRoute(node.to)){
+            return true;
+        }
+
+        var result = false;
+        if(!node.content)
+            return false;
+
+        for(var i = 0; i < node.content.length; ++i)
+        {
+            result = this.recursiveFindPath(node.content[i]);
+            if(result) {
+                return true;
+            }
+        }
+
+        return result;
+    }
+
+    handleClick(e){
+        e.stopPropagation();
+        
+        if(this.state.isCollapsable){
+            this.setState({ isOpen: !this.state.isOpen });
+        }
     }
 
     render(){
         let menuItemCursorStyle = {
             cursor: 'pointer'
         };
-        let isCollapsable = this.state.node.content && this.state.node.content.length > 0;
 
         return(
-            <li className="metismenu-item" onClick={isCollapsable && this.handleClick} style={menuItemCursorStyle}>
-                    {isCollapsable &&
+            <li className="metismenu-item" onClick={this.handleClick} style={menuItemCursorStyle}>
+                    {this.state.isCollapsable &&
                         <a className="metismenu-link">
                             <i className={"metismenu-icon" + (this.state.node.icon ? ` ${this.state.node.icon}` : "")} />
                             {this.state.node.label}
-                            {isCollapsable && !this.state.isOpen
+                            {this.state.isCollapsable && !this.state.isOpen
                                 ? <i className="metismenu-state-icon pe-7s-angle-down" />
                                 : null
                             }
                             {
-                                isCollapsable && this.state.isOpen
+                                this.state.isCollapsable && this.state.isOpen
                                 ? <i className="metismenu-state-icon pe-7s-angle-down rotate-minus-90" />
                                 : null
                             }
                         </a>}
 
-                    {!isCollapsable &&
+                    {!this.state.isCollapsable &&
                         <Link to={this.state.node.to} className={"metismenu-link" + (this.activeRoute(this.state.node.to) ? " active" : "")}>
                             <i className={"metismenu-icon" + (this.state.node.icon ? ` ${this.state.node.icon}` : "")} />
                             {this.state.node.label}
                         </Link>
                     }
                     
-                {isCollapsable
+                {this.state.isCollapsable
                     ?
                         <ul className={"metismenu-container" + (this.state.isOpen ? " visible": "")}>
                         {this.state.node.content.map((item, index) =>

@@ -17,7 +17,6 @@ export const AuthenticationSetupNav = [
             {
                 label: 'Create new customer',
                 to: '/customers/create',
-
             },
         ],
     },
