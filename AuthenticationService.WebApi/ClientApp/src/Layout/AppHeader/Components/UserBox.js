@@ -87,6 +87,14 @@ class UserBox extends React.Component {
                                                     Logs
                                                 </NavLink>
                                             </NavItem>
+                                            <NavItem className="nav-item-header">
+                                                Session
+                                            </NavItem>
+                                            <NavItem>
+                                                <NavLink to="/logout">
+                                                    Logout
+                                                </NavLink>
+                                            </NavItem>
                                         </Nav>
                                     </DropdownMenu>
                                 </UncontrolledButtonDropdown>

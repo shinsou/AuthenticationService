@@ -7,7 +7,7 @@ import {
 } from 'react-toastify';
 
 
-const AccountPages = lazy(() => import('../../Pages/Account'))
+const AccountPages = lazy(() => import('../../Pages/Account'));
 
 const Dashboards = lazy(() => import('../../Pages/Dashboards'));
 const CustomersPages = lazy(() => import('../../Pages/Customers'));

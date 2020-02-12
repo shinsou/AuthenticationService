@@ -1,5 +1,5 @@
 import React, {Fragment, Component} from "react";
-
+import { AuthenticationService } from '../../../Services/AuthenticationService';
 import Slider from "react-slick";
 import FloatingLabel from "floating-label-react";
 import "floating-label-react/styles.css";
@@ -14,7 +14,7 @@ export default class Login extends Component {
         super(props);
         this.state = {
             username: 'demo',
-            password: '"Q1w2e3r4!'
+            password: 'Q1w2e3r4!'
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -26,8 +26,9 @@ export default class Login extends Component {
     }
     
     handleSubmit(event) {
-        //alert('A name was submitted: ' + this.state.value);
         event.preventDefault();
+        let res = AuthenticationService.signIn({ username: this.state.username, password: this.state.password});
+        window.location.pathname = "/";
     }
 
     render() {
@@ -98,7 +99,7 @@ export default class Login extends Component {
                                 <div className="app-logo"/>
                                 <Row className="divider"/>
                                 <div>
-                                    <Form>
+                                    <Form onSubmit={this.handleSubmit}>
                                         <Row form>
                                             <Col md={12}>
                                                     <FloatingLabel
