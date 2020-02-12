@@ -2,7 +2,7 @@ export const MainNav = [
     {
         icon: 'pe-7s-graph2',
         label: 'Activity',
-        to: '#/dashboards/activity',
+        to: '/dashboards/activity',
     },
 ];
 export const AuthenticationSetupNav = [
@@ -12,11 +12,11 @@ export const AuthenticationSetupNav = [
         content: [
             {
                 label: 'List customers',
-                to: '#/customers/list',
+                to: '/customers/list',
             },
             {
                 label: 'Create new customer',
-                to: '#/customers/add',
+                to: '/customers/create',
 
             },
         ],
@@ -27,11 +27,11 @@ export const AuthenticationSetupNav = [
         content: [
             {
                 label: 'List clients',
-                to: '#/clients/list',
+                to: '/clients/list',
             },
             {
                 label: 'Create new client',
-                to: '#/clients/add',
+                to: '/clients/create',
             },
         ],
     },
@@ -41,11 +41,11 @@ export const AuthenticationSetupNav = [
         content: [
             {
                 label: 'List services/resources',
-                to: '#/resources/list',
+                to: '/resources/list',
             },
             {
                 label: 'Introduce new service/resource',
-                to: '#/resources/add',
+                to: '/resources/create',
             },
         ],
     },
@@ -55,11 +55,11 @@ export const AuthenticationSetupNav = [
         content: [
             {
                 label: 'List users',
-                to: '#/users/list',
+                to: '/users/list',
             },
             {
                 label: 'Create new user',
-                to: '#/users/add',
+                to: '/users/create',
             },
         ],
     },
@@ -69,6 +69,6 @@ export const SystemNav = [
     {
         icon: 'pe-7s-config',
         label: 'Environment',
-        to: '#/system/settings',
+        to: '/system/settings/environment',
     },
 ];

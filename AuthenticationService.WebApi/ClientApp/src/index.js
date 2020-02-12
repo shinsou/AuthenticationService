@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 // import registerServiceWorker from './registerServiceWorker';
 import { unregister } from './registerServiceWorker';
 
-import { HashRouter as Router } from 'react-router-dom'
-import './assets/base.css';
+import { BrowserRouter as Router } from 'react-router-dom'
+import './assets/base.scss';
 import Main from './Pages/Main';
 import configureStore from './store/configureStore';
 import { Provider } from 'react-redux';
