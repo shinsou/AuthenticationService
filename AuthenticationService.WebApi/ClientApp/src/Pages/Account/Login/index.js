@@ -28,7 +28,11 @@ export default class Login extends Component {
     handleSubmit(event) {
         event.preventDefault();
         let res = AuthenticationService.signIn({ username: this.state.username, password: this.state.password});
-        window.location.pathname = "/";
+        
+        if(res)
+            window.location.pathname = "/";
+        //else
+        // show error
     }
 
     render() {
