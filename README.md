@@ -1,24 +1,46 @@
 # Overview
 
+Sample project how one could implement authentication service using IdentityServer4 middleware.
+
+Project consists of .NET Core as API service in the background and ReactJS+Webpack as UI for managing (AdminUI).
+As for bridge between these two I've implemented separated middleware, or sort of a proxy. Purpose for this is 
+to challenge the idea of using server side rendered (e.g. Razor, or alike) pages. There are several reasons 
+why one should use server rendered pages (the main one is security...).
+
+This is my first attempt on this approach and most likely others will come later. I've chosen ReactJs as to me it
+was the most commonly used by developers I've been working with. There's no actual difference between other javascript
+frameworks, as they could also be used.
+
+One new tech that I've also been interested in to get more familiar with is Blazor... but as it's not the most commonly
+used tech (yet), I'll most likely have a look at it later.
+
+###### Background:
+
+I've been working as software architect/fullstack developer, front-end development was never my strengths and I'd be more
+than glad if someone would like to contribute in this part; other ideas and thoughts are also welcome.
+
 ## NOTE! 
 #### :godmode:  Project is currently under construction and is not ready for use.
 
-
-
-Sample project how one could implement authentication service (Identity service).
-
-The main target of this project is to produce web based authentication service with administrative UI.
-
-Notes!
-- This is a monolith on purpose.
 - AspNetCore 3+ & (SpaServices, NodeServices)  => Obsolete https://github.com/dotnet/AspNetCore/issues/12890
 
 # Technical overview
 
+I've chosen to use the latest version of .NET Core at the moment (3.1) for couple of reasons. First .NET Core 2.2 has most of the
+fixes that earlier versions had with HTTP messaging ([#1](https://github.com/dotnet/runtime/issues/26397#issuecomment-395489603), 
+[#2](https://github.com/dotnet/runtime/issues/21440), and the list goes on...).
+ As for the second, .NET Core 2.2 been stated to be EOL and I'm looking for 
+framework with Long Term Support (LST) with stable release; this also the reason for "why not 3.0" (EOS: March of 2020). The third
+reason for this version is because of its edge features that I'd like very much to use, also to keep my knowldege up to date.
+There's also 3rd party changes that must be taken in account; [more from here](https://github.com/aspnet/Announcements/issues/390).
+Beside these reasons, there's no reaso for not using earlier versions (so if you are required to use one, please find out the challenges
+that may be ahead of you and resolve, how to do workarounds for them).
+
 ## Architecture structure
 
 The solution applies Clean Architecture where it decouples layers into projects.
-For more of Clean Architecture, I find [this blog](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) most helpfull to get the basic understanding of it.
+For more of Clean Architecture, I find [this blog](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) 
+most helpfull to get the basic understanding on it.
 
 
 
@@ -26,11 +48,40 @@ For more of Clean Architecture, I find [this blog](https://blog.cleancoder.com/u
 
 This project is the top main layer. It's also the main running process that binds everything together.
 
+
+
 #### .Application
+
+Defines used adapters/interfaces and runs business logic.
+
+
+
+#### .Infrastructure
+
+Implementations for adapters and serves as gateways for used services.
+
+###### LdapGateway
+
+Implements gateway for AD integration. #TODO/TBA...
+
+###### RoleGateway
+
+Overrides `RoleManager` class to enable custom user model to be used.
+
+###### SignInGateway
+
+Overrides `SignInManager` class to enable custom sign in process.
+
+###### UserGateway
+
+Overrides `UserManager` class to support `SignInGateway` implementations in authentication process,
+as also to support custom user model to be used with data interactions.
+
+
 
 #### .Persistence
 
-Serves as layer for local data storage.
+Implements local data access or layer for local data storage; that consists of contexts, repositories, etc..
 
 To create snapshots for migrations
 
@@ -45,6 +96,18 @@ dotnet ef migrations add {snapshot_name : e.g. InitConfContext} --context Custom
 ```
 
 Use `--verbose` property only when you want to see all logs from migration snapshot process
+
+
+
+#### .Domain
+
+I hope the name speaks of its self...
+
+
+
+#### .Core
+
+Interfaces mainly for business logic contracts. Works as root-blueprint for whole project.
 
 
 
@@ -75,6 +138,15 @@ The `docker-compose` is build in a way where it holds all the basic stuff the se
 
 
 ## How to run
+
+##### Prerequirements
+- Docker
+- NodeJS
+- Dotnet 3.1 or later
+- PostgreSql (implemented; can be changed)
+  - either configure networking or use vm-host IP for database address
+- Redis (implemented; can be changed)
+
 
 ##### Visual Studio (Simplest)
 Start visual studio 2019 and select profile you wish to use and press play. If you want to run it as docker-compose for some reason, please change target default project to docker-compose.
