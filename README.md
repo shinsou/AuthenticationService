@@ -11,7 +11,8 @@ Using following techs
 - Docker/Docmer-compose (3.4)
 - Azure on the background with DevOps pipeline (private)
 
-==================
+
+### Description
 
 Project consists of .NET Core as API service in the background and ReactJS+Webpack as UI for managing (AdminUI).
 As for bridge between these two I've implemented separated middleware, or sort of a proxy. Purpose for this is 
