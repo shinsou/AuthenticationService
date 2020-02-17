@@ -1,6 +1,17 @@
 # Overview
 
+###### TL;DR
+
 Sample project how one could implement authentication service using IdentityServer4 middleware.
+
+Using following techs
+
+- IdP (IdentityServer4 NetCore 3.1 + CarterApi)
+- AdminUI (ReactJs): Manage Users, Clients, Resources, Sessions, etc.
+- Docker/Docmer-compose (3.4)
+- Azure on the background with DevOps pipeline (private)
+
+==================
 
 Project consists of .NET Core as API service in the background and ReactJS+Webpack as UI for managing (AdminUI).
 As for bridge between these two I've implemented separated middleware, or sort of a proxy. Purpose for this is 
@@ -23,6 +34,8 @@ than glad if someone would like to contribute in this part; other ideas and thou
 #### :godmode:  Project is currently under construction and is not ready for use.
 
 - AspNetCore 3+ & (SpaServices, NodeServices)  => Obsolete https://github.com/dotnet/AspNetCore/issues/12890
+- MetisMenu supports only HashRouter => Refactored implementation manually to use BrowserRouter
+- Using Webpack => Upgraded from 3.x to 4.x (required somewhat refactoring in UI; cleanup not complete, but runs)
 
 # Technical overview
 
