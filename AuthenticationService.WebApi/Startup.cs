@@ -41,26 +41,31 @@ namespace AuthenticationService.WebApi
             this.Logger.Information("Add {settings} configuration into services configurations", "Database");
             services.AddDatabase(this.Configuration);
 
-            //this.Logger.Information("Add {settings} configuration into services configurations", "CORS");
-            //services.AddCorsConfigurations(this.Configuration);
+            this.Logger.Information("Add {settings} configuration into services configurations", "CORS");
+            services.AddCorsConfigurations(this.Configuration);
 
             this.Logger.Information("Add {settings} configuration into services configurations", "Custom Services");
             services.AddServices(this.Configuration);
-
-            //this.Logger.Information("Add {settings} configuration into services configurations", "Auth");
-            //services.AddAuth(this.Configuration);
 
             this.Logger.Information("Add {settings} configuration into services configurations", "SPA");
             services.AddSpa();
 
             this.Logger.Information("Add {settings} configuration into services configurations", "Carter");
-            services.AddCarter();
+            services.AddCarter(configurator: config => {
+                config.WithModelBinder<Binders.CustomJsonModelBinder>();
+
+            });
 
             this.Logger.Information("Configure {settings} options into services configurations", "ForwardedHeaders");
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
+
+            services.AddAuthorization(this.Configuration);
+
+            this.Logger.Information("Add {settings} configuration into services configurations", "Auth");
+            services.AddAuthentication(this.Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,14 +90,11 @@ namespace AuthenticationService.WebApi
                 app.UseHsts();
             }
 
-            //this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Authentiction");
-            //app.UseAuthentication();
-
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "HttpsRedirection");
             app.UseHttpsRedirection();
 
-            this.Logger.Information("Configure {middleware} middleware to be used in application builder", "StaticFiles");
-            app.UseStaticFiles();
+            //this.Logger.Information("Configure {middleware} middleware to be used in application builder", "StaticFiles");
+            //app.UseStaticFiles();
 
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "SpaStaticFiles");
             app.UseSpaStaticFiles();
@@ -100,8 +102,14 @@ namespace AuthenticationService.WebApi
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Routing");
             app.UseRouting();
 
-            //this.Logger.Information("Configure {middleware} middleware to be used in application builder", "CORS");
-            //app.UseCors();
+            this.Logger.Information("Configure {middleware} middleware to be used in application builder", "CORS");
+            app.UseCors();
+
+            this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Authentiction");
+            app.UseIdentityServer();
+
+            this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Authorization");
+            app.UseAuthorization();
 
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Endpoints");
             app.UseEndpoints(endpoints =>
@@ -109,15 +117,6 @@ namespace AuthenticationService.WebApi
                 this.Logger.Information("Configure {middleware} route endpoints to be used in application endpoints middleware", "Carter");
                 endpoints.MapCarter();
             });
-
-            //app.Use(async (context, next) => {
-            //    //if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
-            //    if (!context.User.Identity.IsAuthenticated) {
-            //        await context.ChallengeAsync();
-            //    } else {
-            //        await next();
-            //    }
-            //});
 
             this.Logger.Information("Configure {middleware} middleware into application builder", "SPA");
             app.UseSpa(spa =>

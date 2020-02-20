@@ -26,6 +26,7 @@ import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 //import Collapse from "@material-ui/core/Collapse";
 
 import {MainNav, AuthenticationSetupNav, SystemNav} from './NavItems';
+//import * as NavItems from './NavItems';
 
 const navSections = [
     {

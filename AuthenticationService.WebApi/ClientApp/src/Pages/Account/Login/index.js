@@ -9,12 +9,66 @@ import bg3 from '../../../assets/utils/images/originals/1673318.jpg';
 
 import {Col, Row, Button, Form, FormGroup, Label, Input} from 'reactstrap';
 
+class LocalLogin extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render(){
+        return (
+            <Form onSubmit={this.props.handleSubmit}>
+                <Row form>
+                    <Col md={12}>
+                            <FloatingLabel
+                                id="username"
+                                name="username"
+                                placeholder="Username"
+                                type="text"
+                                value={this.props.username}
+                                onChange={this.props.handleChange}
+                                />
+                    </Col>
+                    <Col md={12}>
+                        <FormGroup>
+                            <FloatingLabel
+                                id="password"
+                                name="password"
+                                placeholder="Password"
+                                type="password"
+                                value={this.props.password}
+                                onChange={this.props.handleChange}
+                                />
+                        </FormGroup>
+                    </Col>
+                </Row>
+                <FormGroup check className="">
+                    <Input type="checkbox" name="check" id="exampleCheck" className="" value={this.props.rememberMe} />
+                    <Label for="exampleCheck" check>Keep me logged in</Label>
+                </FormGroup>
+                <Row className="divider"/>
+                <div className="d-flex align-items-center">
+                    <div className="ml-auto">
+                        <Button color="primary" size="lg">Login to Dashboard</Button>
+                    </div>
+                </div>
+            </Form>
+        );
+    }
+}
+
+
 export default class Login extends Component {
     constructor(props){
         super(props);
+
         this.state = {
             username: 'demo',
-            password: 'Q1w2e3r4!'
+            password: 'Q1w2e3r4!',
+
+            rememberMe: false,
+            providers: [],
+            returnUrl: '',
+            enableLocalLogin: true
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -24,15 +78,33 @@ export default class Login extends Component {
     handleChange(event) {
         this.setState({[event.target.name]: event.target.value});
     }
-    
+
     handleSubmit(event) {
         event.preventDefault();
-        let res = AuthenticationService.signIn({ username: this.state.username, password: this.state.password});
         
-        if(res)
-            window.location.pathname = "/";
-        //else
-        // show error
+        AuthenticationService.signIn(
+            {
+                username: this.state.username,
+                password: this.state.password
+            })
+            .then(result => {
+                debugger;
+                if(result)
+                    window.location.pathname = "/";
+                //else
+                    // show error
+            })
+    }
+
+    componentDidMount() {
+        // get login data for connected client/user
+        AuthenticationService.getLoginModel()
+            .then(loginModel => {
+                //this.state.username = loginModel.username;
+                this.state.rememberMe = loginModel.rememberLogin;
+                this.state.providers = loginModel.externalProviders;
+                this.state.enableLocalLogin = loginModel.enableLocalLogin;
+            });
     }
 
     render() {
@@ -49,7 +121,6 @@ export default class Login extends Component {
             adaptiveHeight: true
         };
         return (
-
             <Fragment>
                 <div className="h-100">
                     <Row className="h-100 no-gutters">
@@ -102,44 +173,12 @@ export default class Login extends Component {
                             <Col sm="11" className="mx-auto app-login-box">
                                 <div className="app-logo"/>
                                 <Row className="divider"/>
-                                <div>
-                                    <Form onSubmit={this.handleSubmit}>
-                                        <Row form>
-                                            <Col md={12}>
-                                                    <FloatingLabel
-                                                        id="username"
-                                                        name="username"
-                                                        placeholder="Username"
-                                                        type="text"
-                                                        value={this.state.username}
-                                                        onChange={this.handleChange}
-                                                        />
-                                            </Col>
-                                            <Col md={12}>
-                                                <FormGroup>
-                                                    <FloatingLabel
-                                                        id="password"
-                                                        name="password"
-                                                        placeholder="Password"
-                                                        type="password"
-                                                        value={this.state.password}
-                                                        onChange={this.handleChange}
-                                                        />
-                                                </FormGroup>
-                                            </Col>
-                                        </Row>
-                                        <FormGroup check className="">
-                                            <Input type="checkbox" name="check" id="exampleCheck" className="" />
-                                            <Label for="exampleCheck" check>Keep me logged in</Label>
-                                        </FormGroup>
-                                        <Row className="divider"/>
-                                        <div className="d-flex align-items-center">
-                                            <div className="ml-auto">
-                                                <Button color="primary" size="lg">Login to Dashboard</Button>
-                                            </div>
-                                        </div>
-                                    </Form>
-                                </div>
+                                {(!this.state.enableLocalLogin && (this.state.providers || this.state.providers.length === 0))
+                                    ?
+                                        <div>There's no associated login providers nor local login is permitted for this client!</div>
+                                    :
+                                        <LocalLogin handleChange={this.handleChange} handleSubmit={this.handleSubmit} {...this.state} />
+                                }
                             </Col>
                         </Col>
                     </Row>

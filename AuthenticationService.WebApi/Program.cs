@@ -30,6 +30,7 @@ namespace AuthenticationService.WebApi
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseIISIntegration();
                     webBuilder.UseStartup<Startup>();
                 });
     }

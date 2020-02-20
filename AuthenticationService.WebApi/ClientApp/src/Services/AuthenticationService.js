@@ -1,52 +1,55 @@
 import React from 'react';
 import { BehaviorSubject } from 'rxjs';
+import { Gateway } from './Gateway';
 
-const sessionObject = new BehaviorSubject(JSON.parse(localStorage.getItem('session')));
+const sessionObject$ = new BehaviorSubject(JSON.parse(localStorage.getItem('session')));
 
-const getSession = () => {
-    return sessionObject.value;
-};
+const getLoginModel = () =>
+    Gateway.get('/login');
 
-const signIn = ({ username, password }) => {
-    let result = false;
-    if (username === 'demo' && password == 'Q1w2e3r4!') {
-        result = true;
+const getSession = async () =>
+    await Gateway
+        .get('/session')
+        .then(resp => {
+            sessionObject$.subscribe(resp);
+            return resp;
+        });
 
-        localStorage.setItem('session', JSON.stringify({
-            username: username,
-            expires: Date.now() + 60000  // expires in 60 sec
-        }))
+const signIn = async ({ username, password }) => 
+    await Gateway.post('/login', JSON.stringify({username, password}))
+        .then(user => {
+            localStorage.setItem('session', user);
+            sessionObject$.next(user);
 
-    }
-
-    return result;
-};
+            return user;
+        })
 
 const signOut = () => {
     return true;
 }
 
-const isExpired = () => {
-    let session = getSession();
-    let result = session && session.expires > Date.now();
+// const isExpired = async () => {
+//     let session = await getSession();
+//     let result = session && session.expires > Date.now();
 
-    if(!result)
-    {
-        localStorage.removeItem('session');
-    }
+//     if(!result) {
+//         localStorage.removeItem('session');
+//     }
+// debugger;
+//     return !result
+// }
 
-    return !result
-}
-
-const isAuthenticated = () => {
-    return !isExpired();
-}
+// const isAuthenticated = async () =>
+//     await isExpired()
+    
 
 export const AuthenticationService = {
-    session: sessionObject.asObservable(),
+    session: sessionObject$.asObservable(),
+    get sessionValue () { return sessionObject$.value; },
     getSession,
+    getLoginModel,
     signIn,
     signOut,
-    isExpired,
-    isAuthenticated
+    //isExpired,
+    //isAuthenticated
 }

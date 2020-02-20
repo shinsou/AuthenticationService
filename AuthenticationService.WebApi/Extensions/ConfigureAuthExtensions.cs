@@ -18,7 +18,7 @@ namespace AuthenticationService.WebApi.Extensions
 {
     public static class ConfigureAuthExtensions
     {
-        public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var dbSettings = new DatabaseSettings(configuration);
             var redisSettings = new RedisSettings(configuration);
@@ -65,15 +65,35 @@ namespace AuthenticationService.WebApi.Extensions
                     .AddAspNetIdentity<User>()
                     ;
 
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            //services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            services.AddAuthentication(options => {
+                        options.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                        options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                        options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                        options.DefaultSignInScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                    })
+                    .AddJwtBearer(options =>
+                    {
+                        options.Audience = "https://localhost:5001";
+                        options.Authority = "https://localhost:5001";
+                        options.RequireHttpsMetadata = true;
+                        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters();
+                    })
                     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddMultipleOpenIdConnect(authSettings); // allow multiple providers defined in settings => iterate and add all
-
-            services.Configure<CookieAuthenticationOptions>(opt =>
-            {
-                opt.LoginPath = new PathString("/Login");
-                opt.LogoutPath = new PathString("/Logout");
+            
+            services.ConfigureApplicationCookie(options => {
+                options.LoginPath = "/Login";
+                options.LogoutPath = "/Logout";
             });
+            
+
+            return services;
+        }
+
+        public static IServiceCollection AddAuthorization(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthorization();
 
             return services;
         }
