@@ -15,14 +15,19 @@ namespace AuthenticationService.WebApi.Binders
         public async Task<T> Bind<T>(HttpRequest request)
             => await Bind<T>(request, true);
 
+        /// <summary>
+        /// Custom json model binder for override default binder
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="request"></param>
+        /// <param name="caseSensitive"></param>
+        /// <returns></returns>
         public async Task<T> Bind<T>(HttpRequest request, bool caseSensitive = false)
         {
             var loggerFactory = (ILoggerFactory)request.HttpContext.RequestServices.GetService(typeof(ILoggerFactory));
             var logger = loggerFactory.CreateLogger<CustomJsonModelBinder>();
             try
             {
-                //request.Body
-
                 var result = await JsonSerializer.DeserializeAsync<T>(request.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = caseSensitive });
 
                 return result;
