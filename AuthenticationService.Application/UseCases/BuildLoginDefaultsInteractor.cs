@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace AuthenticationService.Application.UseCases
 {
-    public class BuildLoginResponseModelInteractor : IInteractor<LoginResponse, string>
+    public class BuildLoginDefaultsInteractor : IInteractor<LoginResponse, string>
     {
         #region Members
 
@@ -21,10 +21,10 @@ namespace AuthenticationService.Application.UseCases
         private IIdentityServerInteractionService InteractionService { get; }
         private IAuthenticationSchemeProvider SchemeProvider { get; }
         private IClientStore ClientStore { get; }
-        private ILogger<BuildLoginResponseModelInteractor> Logger { get; }
+        private ILogger<BuildLoginDefaultsInteractor> Logger { get; }
 
         #endregion
-        public BuildLoginResponseModelInteractor(
+        public BuildLoginDefaultsInteractor(
             HttpContext httpContext,
             IIdentityServerInteractionService interactionService,
             IAuthenticationSchemeProvider authenticationSchemeProvider,
@@ -37,7 +37,7 @@ namespace AuthenticationService.Application.UseCases
             this.ClientStore = clientStore;
             this.SchemeProvider = authenticationSchemeProvider;
 
-            this.Logger = loggerFactory.CreateLogger<BuildLoginResponseModelInteractor>();
+            this.Logger = loggerFactory.CreateLogger<BuildLoginDefaultsInteractor>();
         }
         public async Task<TViewModel> HandleAsync<TViewModel>(IPresenter<TViewModel, LoginResponse> presenter, string returnUrl)
         {

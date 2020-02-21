@@ -44,7 +44,7 @@ namespace AuthenticationService.WebApi.Modules.v1.Login
                 }
 
                 this.Logger.LogDebug("Create {interactor} interactor", "BuildLoginResponseModel");
-                var interactor = new BuildLoginResponseModelInteractor(
+                var interactor = new BuildLoginDefaultsInteractor(
                     req.HttpContext,
                     interactionService,
                     authenticationSchemeProvider,
