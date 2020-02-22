@@ -68,7 +68,8 @@ export default class Login extends Component {
             rememberMe: false,
             providers: [],
             returnUrl: '',
-            enableLocalLogin: true
+            enableLocalLogin: true,
+            antiforgeryToken: null
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -85,7 +86,8 @@ export default class Login extends Component {
         AuthenticationService.signIn(
             {
                 username: this.state.username,
-                password: this.state.password
+                password: this.state.password,
+                csrfToken: this.state.antiforgeryToken
             })
             .then(result => {
                 debugger;
@@ -104,6 +106,7 @@ export default class Login extends Component {
                 this.state.rememberMe = loginModel.rememberLogin;
                 this.state.providers = loginModel.externalProviders;
                 this.state.enableLocalLogin = loginModel.enableLocalLogin;
+                this.state.antiforgeryToken = loginModel.requestVerificationToken;
             });
     }
 

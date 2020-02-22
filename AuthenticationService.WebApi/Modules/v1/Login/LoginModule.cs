@@ -7,7 +7,9 @@ using FluentValidation;
 using IdentityServer4.Extensions;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,7 @@ namespace AuthenticationService.WebApi.Modules.v1.Login
             IIdentityServerInteractionService interactionService,
             IAuthenticationSchemeProvider authenticationSchemeProvider,
             IClientStore clientStore,
+            IAntiforgery antiForgery,
             ILoggerFactory loggerFactory) : base("/login")
         {
             this.Logger = loggerFactory.CreateLogger<LoginModule>();
@@ -56,14 +59,28 @@ namespace AuthenticationService.WebApi.Modules.v1.Login
                     new Presenter(),
                     returnUrl);
 
+                var antiforgeryToken = antiForgery.GetAndStoreTokens(req.HttpContext);
+                viewModel.RequestVerificationToken = antiforgeryToken.RequestToken;
+
                 await res.Negotiate(viewModel);
             });
 
             Post("/", async (req, res) =>
             {
-                var test1 = await req.Bind<ViewModel>();
-                res.StatusCode = 401;
-                //await res.Negotiate(null);
+                try {
+                    await antiForgery.ValidateRequestAsync(req.HttpContext);
+
+                    var test1 = await req.Bind<ViewModel>();
+                    res.StatusCode = 401;
+
+                    //await res.Negotiate(null);
+                } catch (AntiforgeryValidationException avex) {
+                    this.Logger.LogError(avex, avex.Message);
+                    res.StatusCode = 400;
+                } catch (Exception ex) {
+                    this.Logger.LogError(ex, ex.Message);
+                    res.StatusCode = 500;
+                }
             });
         }
     }

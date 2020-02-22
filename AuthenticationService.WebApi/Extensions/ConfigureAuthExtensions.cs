@@ -18,7 +18,7 @@ namespace AuthenticationService.WebApi.Extensions
 {
     public static class ConfigureAuthExtensions
     {
-        public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddAuthenticationWithRedis(this IServiceCollection services, IConfiguration configuration)
         {
             var dbSettings = new DatabaseSettings(configuration);
             var redisSettings = new RedisSettings(configuration);
@@ -54,12 +54,12 @@ namespace AuthenticationService.WebApi.Extensions
                     })
                     .AddOperationalStore(options =>
                     {
-                        options.RedisConnectionString = redisSettings.ConnectionString;
+                        options.RedisConnectionString = redisSettings.GetConnectionString();
                         options.KeyPrefix = "ops_";
                     })
                     .AddRedisCaching(options =>
                     {
-                        options.RedisConnectionString = redisSettings.ConnectionString;
+                        options.RedisConnectionString = redisSettings.GetConnectionString();
                         options.KeyPrefix = "redis_";
                     })
                     .AddAspNetIdentity<User>()

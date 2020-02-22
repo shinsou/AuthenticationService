@@ -52,7 +52,7 @@ namespace AuthenticationService.WebApi
 
             this.Logger.Information("Add {settings} configuration into services configurations", "Carter");
             services.AddCarter(configurator: config => {
-                config.WithModelBinder<Binders.CustomJsonModelBinder>();
+                config.WithModelBinder<ModuleHelpers.CustomJsonModelBinder>();
 
             });
 
@@ -65,11 +65,14 @@ namespace AuthenticationService.WebApi
             services.AddAuthorization(this.Configuration);
 
             this.Logger.Information("Add {settings} configuration into services configurations", "Auth");
-            services.AddAuthentication(this.Configuration);
+            services.AddAuthenticationWithRedis(this.Configuration);
+
+            this.Logger.Information("Add {settings} configuration into services configurations", "DataProtection");
+            services.AddDataProtection(this.Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery)
         {
             if (env.IsDevelopment())
             {
@@ -117,6 +120,24 @@ namespace AuthenticationService.WebApi
                 this.Logger.Information("Configure {middleware} route endpoints to be used in application endpoints middleware", "Carter");
                 endpoints.MapCarter();
             });
+
+            //app.Use(next => context =>
+            //{
+            //    var path = context.Request.Path.Value;
+
+            //    if (
+            //string.Equals(path, "/", System.StringComparison.OrdinalIgnoreCase) ||
+            //string.Equals(path, "/index.html", System.StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        // The request token can be sent as a JavaScript-readable cookie, 
+            //        // and Angular uses it by default.
+            //        var tokens = antiforgery.GetAndStoreTokens(context);
+            //        context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken,
+            //            new Microsoft.AspNetCore.Http.CookieOptions() { HttpOnly = false });
+            //    }
+
+            //    return next(context);
+            //});
 
             this.Logger.Information("Configure {middleware} middleware into application builder", "SPA");
             app.UseSpa(spa =>

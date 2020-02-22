@@ -2,7 +2,17 @@ import React from 'react';
 import { BehaviorSubject } from 'rxjs';
 import { Gateway } from './Gateway';
 
-const sessionObject$ = new BehaviorSubject(JSON.parse(localStorage.getItem('session')));
+const getSessionLocalStorage = () => {
+    var session = localStorage.getItem('session');
+    if(session == null || session.length < 1){
+        localStorage.removeItem('session');
+        return null;
+    }
+
+    return session;
+}
+
+const sessionObject$ = new BehaviorSubject(JSON.parse(getSessionLocalStorage()));
 
 const getLoginModel = () =>
     Gateway.get('/login');
@@ -15,8 +25,8 @@ const getSession = async () =>
             return resp;
         });
 
-const signIn = async ({ username, password }) => 
-    await Gateway.post('/login', JSON.stringify({username, password}))
+const signIn = async ({ username, password, csrfToken }) => 
+    await Gateway.post('/login', JSON.stringify({username, password}), csrfToken)
         .then(user => {
             localStorage.setItem('session', user);
             sessionObject$.next(user);

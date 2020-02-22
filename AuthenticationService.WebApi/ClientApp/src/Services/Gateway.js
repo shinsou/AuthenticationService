@@ -11,8 +11,8 @@ const get = (path) =>
         headers:{
             'Content-Type': 'application/json',
         }
-    }).
-    then(async resp => {
+    })
+    .then(async resp => {
         if(resp.ok){
             return await resp.json();
         } else {
@@ -39,32 +39,42 @@ const get = (path) =>
         }
     })
 
-const post = (path, body) =>
-        fetch(`${safeBaseApiUrl}${path}`,{
-            method: 'POST',
-            credentials: 'include',
-            headers:{
-                'Content-Type': 'application/json',
-            },
-            body: body,
-        })
-        .then(response =>
-            response
-                .text()
-                .then(text =>{
-                    const data = text && JSON.parse(text)
-                    if(response.ok){
-                        return data;
-                    }
-                    
-                    if([401, 403].indexOf(response.status) !== -1){
-                        // logout
-                    }
+const post = (path, body, csrfToken) =>
+    fetch(`${safeBaseApiUrl}${path}`,{
+        method: 'POST',
+        credentials: 'include',
+        headers: cleanupHeadersForBlanks({
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': csrfToken
+        }),
+        body: body,
+    })
+    .then(response =>
+        response
+            .text()
+            .then(text =>{
+                const data = text && JSON.parse(text)
+                if(response.ok){
+                    return data;
+                }
+                
+                if([401, 403].indexOf(response.status) !== -1){
+                    // logout
+                }
 
-                    const error = (data && data.message) || response.statusText;
-                    return error;
-                })
-        )
+                const error = (data && data.message) || response.statusText;
+                return error;
+            })
+    )
+
+// remove any null/undefined keys from headers; as there's not point delivering such properties
+const cleanupHeadersForBlanks = (headerObject) =>
+    Object
+        .keys(headerObject)
+        .forEach((key) => (
+            headerObject[key] === null
+         || headerObject[key] === undefined)
+        && delete headerObject[key]);
 
 export const Gateway = {
     get,

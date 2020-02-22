@@ -37,6 +37,9 @@ namespace AuthenticationService.WebApi.Modules.v1.Login
         /// </summary>
         public bool RememberLogin { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("__RequestVerificationToken")]
+        public string RequestVerificationToken { get; set; }
+
         public ViewModel() { }
 
         public ViewModel(LoginResponse input)
