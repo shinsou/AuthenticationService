@@ -6,6 +6,7 @@ namespace AuthenticationService.Domain
 {
     public class LoginResponse
     {
+        public string Message { get; set; }
         public string RedirectUri { get; set; }
         public string ReturnUrl { get; set; }
         public bool EnableLocalLogin { get; set; }
