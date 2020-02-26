@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthenticationService.Core\AuthenticationService.Core.csproj" />
     <ProjectReference Include="..\AuthenticationService.Domain\AuthenticationService.Domain.csproj" />
     <ProjectReference Include="..\AuthenticationService.SpaServices\AuthenticationService.SpaServices.csproj" />
     <ProjectReference Include="..\AuthenticationService.Application\AuthenticationService.Application.csproj" />

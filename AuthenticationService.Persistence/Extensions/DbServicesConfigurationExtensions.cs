@@ -45,21 +45,21 @@ namespace AuthenticationService.Persistence.Extensions
             switch (contextConnectionType)
             {
                 case DbConnectionTypes.SqlServer:
-                    services.AddDbContextPool<TContext>((serviceProvider, options) =>
+                    services.AddEntityFrameworkSqlServer().AddDbContextPool<TContext>((serviceProvider, options) =>
                     {
                         options.UseSqlServer(connectionString);
                         options.UseInternalServiceProvider(serviceProvider);
                     }, maxPoolSize);
                     break;
                 case DbConnectionTypes.SqlLite:
-                    services.AddDbContextPool<TContext>((serviceProvider, options) =>
+                    services.AddEntityFrameworkSqlite().AddDbContextPool<TContext>((serviceProvider, options) =>
                     {
                         options.UseSqlite(connectionString);
                         options.UseInternalServiceProvider(serviceProvider);
                     }, maxPoolSize);
                     break;
                 case DbConnectionTypes.PostgreSql:
-                    services.AddDbContextPool<TContext>((serviceProvider, options) =>
+                    services.AddEntityFrameworkNpgsql().AddDbContextPool<TContext>((serviceProvider, options) =>
                     {
                         options.UseNpgsql(connectionString);
                         options.UseInternalServiceProvider(serviceProvider);

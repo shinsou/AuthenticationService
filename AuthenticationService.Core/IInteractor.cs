@@ -10,12 +10,12 @@ namespace AuthenticationService.Core
         Task<TViewModel> HandleAsync<TViewModel>(IPresenter<TViewModel, TResult> presenter);
     }
 
-    public interface IInteractor<out TResult, T>
+    public interface IInteractor<out TResult, in T>
     {
         Task<TViewModel> HandleAsync<TViewModel>(IPresenter<TViewModel, TResult> presenter, T input);
     }
 
-    public interface IInteractor<out TResult, T1, T2>
+    public interface IInteractor<out TResult, in T1, in T2>
     {
         Task<TViewModel> HandleAsync<TViewModel>(IPresenter<TViewModel, TResult> presenter, T1 input, T2 input2);
     }

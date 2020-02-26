@@ -41,30 +41,38 @@ namespace AuthenticationService.WebApi
             this.Logger.Information("Add {settings} configuration into services configurations", "Database");
             services.AddDatabase(this.Configuration);
 
-            //this.Logger.Information("Add {settings} configuration into services configurations", "CORS");
-            //services.AddCorsConfigurations(this.Configuration);
+            this.Logger.Information("Add {settings} configuration into services configurations", "CORS");
+            services.AddCorsConfigurations(this.Configuration);
 
             this.Logger.Information("Add {settings} configuration into services configurations", "Custom Services");
             services.AddServices(this.Configuration);
-
-            //this.Logger.Information("Add {settings} configuration into services configurations", "Auth");
-            //services.AddAuth(this.Configuration);
 
             this.Logger.Information("Add {settings} configuration into services configurations", "SPA");
             services.AddSpa();
 
             this.Logger.Information("Add {settings} configuration into services configurations", "Carter");
-            services.AddCarter();
+            services.AddCarter(configurator: config => {
+                config.WithModelBinder<ModuleHelpers.CustomJsonModelBinder>();
+
+            });
 
             this.Logger.Information("Configure {settings} options into services configurations", "ForwardedHeaders");
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
+
+            services.AddAuthorization(this.Configuration);
+
+            this.Logger.Information("Add {settings} configuration into services configurations", "Auth");
+            services.AddAuthenticationWithRedis(this.Configuration);
+
+            this.Logger.Information("Add {settings} configuration into services configurations", "DataProtection");
+            services.AddDataProtection(this.Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery)
         {
             if (env.IsDevelopment())
             {
@@ -85,14 +93,11 @@ namespace AuthenticationService.WebApi
                 app.UseHsts();
             }
 
-            //this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Authentiction");
-            //app.UseAuthentication();
-
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "HttpsRedirection");
             app.UseHttpsRedirection();
 
-            this.Logger.Information("Configure {middleware} middleware to be used in application builder", "StaticFiles");
-            app.UseStaticFiles();
+            //this.Logger.Information("Configure {middleware} middleware to be used in application builder", "StaticFiles");
+            //app.UseStaticFiles();
 
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "SpaStaticFiles");
             app.UseSpaStaticFiles();
@@ -100,8 +105,14 @@ namespace AuthenticationService.WebApi
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Routing");
             app.UseRouting();
 
-            //this.Logger.Information("Configure {middleware} middleware to be used in application builder", "CORS");
-            //app.UseCors();
+            this.Logger.Information("Configure {middleware} middleware to be used in application builder", "CORS");
+            app.UseCors();
+
+            this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Authentiction");
+            app.UseIdentityServer();
+
+            this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Authorization");
+            app.UseAuthorization();
 
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Endpoints");
             app.UseEndpoints(endpoints =>
@@ -110,13 +121,22 @@ namespace AuthenticationService.WebApi
                 endpoints.MapCarter();
             });
 
-            //app.Use(async (context, next) => {
-            //    //if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
-            //    if (!context.User.Identity.IsAuthenticated) {
-            //        await context.ChallengeAsync();
-            //    } else {
-            //        await next();
+            //app.Use(next => context =>
+            //{
+            //    var path = context.Request.Path.Value;
+
+            //    if (
+            //string.Equals(path, "/", System.StringComparison.OrdinalIgnoreCase) ||
+            //string.Equals(path, "/index.html", System.StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        // The request token can be sent as a JavaScript-readable cookie, 
+            //        // and Angular uses it by default.
+            //        var tokens = antiforgery.GetAndStoreTokens(context);
+            //        context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken,
+            //            new Microsoft.AspNetCore.Http.CookieOptions() { HttpOnly = false });
             //    }
+
+            //    return next(context);
             //});
 
             this.Logger.Information("Configure {middleware} middleware into application builder", "SPA");

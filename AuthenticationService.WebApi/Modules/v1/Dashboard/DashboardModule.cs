@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace AuthenticationService.WebApi.Modules.v1.Dashboard
 {
-    public class DashboardModule : CarterModule
+    public class DashboardModule : VersionModule
     {
-        public DashboardModule(ILogger<DashboardModule> logger) : base("/api/dashboard")
+        public DashboardModule(ILogger<DashboardModule> logger) : base("/dashboard")
         {
             Get("/", async (req, res) =>
             {

@@ -1,52 +1,65 @@
 import React from 'react';
 import { BehaviorSubject } from 'rxjs';
+import { Gateway } from './Gateway';
 
-const sessionObject = new BehaviorSubject(JSON.parse(localStorage.getItem('session')));
-
-const getSession = () => {
-    return sessionObject.value;
-};
-
-const signIn = ({ username, password }) => {
-    let result = false;
-    if (username === 'demo' && password == 'Q1w2e3r4!') {
-        result = true;
-
-        localStorage.setItem('session', JSON.stringify({
-            username: username,
-            expires: Date.now() + 60000  // expires in 60 sec
-        }))
-
+const getSessionLocalStorage = () => {
+    var session = localStorage.getItem('session');
+    if(session == null || session.length < 1){
+        localStorage.removeItem('session');
+        return null;
     }
 
-    return result;
-};
+    return session;
+}
+
+const sessionObject$ = new BehaviorSubject(JSON.parse(getSessionLocalStorage()));
+
+const getLoginModel = () =>
+    Gateway.get('/login');
+
+const getSession = async () =>
+    await Gateway
+        .get('/session')
+        .then(resp => {
+            sessionObject$.subscribe(resp);
+            return resp;
+        });
+
+const signIn = async ({ username, password, csrfToken }) => 
+    await Gateway.post('/login', JSON.stringify({username, password}), csrfToken)
+        .then(user => {
+            localStorage.setItem('session', user);
+            sessionObject$.next(user);
+
+            return user;
+        })
 
 const signOut = () => {
     return true;
 }
 
-const isExpired = () => {
-    let session = getSession();
-    let result = session && session.expires > Date.now();
+// const isExpired = async () => {
+//     let session = await getSession();
+//     let result = session && session.expires > Date.now();
 
-    if(!result)
-    {
-        localStorage.removeItem('session');
-    }
+//     if(!result) {
+//         localStorage.removeItem('session');
+//     }
+// debugger;
+//     return !result
+// }
 
-    return !result
-}
-
-const isAuthenticated = () => {
-    return !isExpired();
-}
+// const isAuthenticated = async () =>
+//     await isExpired()
+    
 
 export const AuthenticationService = {
-    session: sessionObject.asObservable(),
+    session: sessionObject$.asObservable(),
+    get sessionValue () { return sessionObject$.value; },
     getSession,
+    getLoginModel,
     signIn,
     signOut,
-    isExpired,
-    isAuthenticated
+    //isExpired,
+    //isAuthenticated
 }

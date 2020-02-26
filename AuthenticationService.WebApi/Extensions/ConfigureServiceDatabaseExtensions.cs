@@ -35,14 +35,13 @@ namespace AuthenticationService.WebApi.Extensions
             services.AddSingleton<IDesignTimeDbContextFactory<CustomConfigurationDbContext>, ConfigureConfigurationDbContextFactory>();
 
             services.AddIdentity<User, Role>()
-                    //.AddEntityFrameworkStores<ApplicationDbContext>()
                     .AddUserStore<UserRepository>()
                     .AddUserManager<UserGateway>()
                     .AddRoleStore<RoleRepository>()
                     .AddRoleManager<RoleGateway>()
                     .AddSignInManager<SignInGateway>()
                     .AddDefaultTokenProviders();
-
+            
             return services;
         }
     }
