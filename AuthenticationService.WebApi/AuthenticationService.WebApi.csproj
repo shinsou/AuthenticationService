@@ -16,11 +16,11 @@
 
   <ItemGroup>
     <PackageReference Include="Carter" Version="5.1.0" />
-    <PackageReference Include="IdentityServer4" Version="3.1.0" />
+    <PackageReference Include="IdentityServer4" Version="3.1.2" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.1.0" />
     <PackageReference Include="IdentityServer4.Contrib.RedisStore" Version="3.0.2" />
-    <PackageReference Include="IdentityServer4.EntityFramework" Version="3.1.0" />
+    <PackageReference Include="IdentityServer4.EntityFramework" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.1" />
@@ -52,6 +52,10 @@
     <ProjectReference Include="..\AuthenticationService.Application\AuthenticationService.Application.csproj" />
     <ProjectReference Include="..\AuthenticationService.Infrastructure\AuthenticationService.Infrastructure.csproj" />
     <ProjectReference Include="..\AuthenticationService.Persistence\AuthenticationService.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Modules\v1\GetResourceList\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(ASPNETCORE_ENVIRONMENT)' == 'Development' And '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

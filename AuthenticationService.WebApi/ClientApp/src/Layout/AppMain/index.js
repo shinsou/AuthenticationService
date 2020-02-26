@@ -1,7 +1,7 @@
 import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
-import React, {Suspense, lazy, Fragment} from 'react';
+import React, {Component, Suspense, lazy, Fragment} from 'react';
 import PrivateRoute from '../../PrivateRoute';
-
+import AppLoader from '../AppLoader'
 import {
     ToastContainer,
 } from 'react-toastify';
@@ -15,41 +15,37 @@ const ClientsPages = lazy(() => import('../../Pages/Clients'));
 const ResourcesPages = lazy(() => import('../../Pages/Resources'));
 const UserPages = lazy(() => import('../../Pages/User'));
 
-const AppMain = () => {
-
-    return (
-        <Fragment>
-            {/* Dashboards */}
-
-            <Suspense fallback={
-                <div className="loader-container">
-                    <div className="loader-container-inner">
-                        <h6 className="mt-3">
-                            Please wait while we load dashboard...
-                        </h6>
-                    </div>
-                </div>
-            }>
+class PrivatePages extends Component {
+    render() {
+        return (
+            <Suspense fallback={<AppLoader headerText="Please wait while loading modules..." smallText="Be patient, this shouldn't take long :)" />}>
                 <PrivateRoute path="/dashboards" component={Dashboards} />
                 <PrivateRoute path="/customers" component={CustomersPages} />
                 <PrivateRoute path="/clients" component={ClientsPages} />
                 <PrivateRoute path="/resources" component={ResourcesPages} />
                 <PrivateRoute path="/users" component={UserPages} />
             </Suspense>
-            <Suspense fallback={
-                <div className="loader-container">
-                    <div className="loader-container-inner">
-                        <h6 className="mt-3">
-                            Please wait while loading login
-                            <small>Because this is a demonstration, we load at once all the Dashboards examples. This wouldn't happen in a real live app!</small>
-                        </h6>
-                    </div>
-                </div>
-                }>
+            );
+    }
+}
+
+class PublicPages extends Component {
+    render() {
+        return(
+            <Suspense fallback={<AppLoader headerText="Please wait while loading login modules..." smallText="Be patient, this shouldn't take long :)" />}>
                 <Route path="/login" component={AccountPages} />
                 <Route path="/register" component={AccountPages} />
                 <Route path="/recover" component={AccountPages} />
             </Suspense>
+        );
+    }
+}
+
+const AppMain = () => {
+    return (
+        <Fragment>
+            <PrivatePages />
+            <PublicPages />
 
             <Route exact path="/" render={() => (
                 <Redirect to="/dashboards/activity"/>

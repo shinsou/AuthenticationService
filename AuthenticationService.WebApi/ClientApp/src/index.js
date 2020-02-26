@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { unregister } from './registerServiceWorker';
 
 import { BrowserRouter as Router } from 'react-router-dom'
+import { history } from './history';
 import './assets/base.scss';
 import Main from './Pages/Main';
 import configureStore from './store/configureStore';
@@ -15,7 +16,7 @@ const rootElement = document.getElementById('root');
 const renderApp = Component => {
   ReactDOM.render(
     <Provider store={store}>
-      <Router>
+      <Router history={history}>
         <Component />
       </Router>
     </Provider>,

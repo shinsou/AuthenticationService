@@ -66,6 +66,7 @@ namespace AuthenticationService.WebApi.Extensions
 
         private static void AddApplicationMigrate(this IServiceScope serviceScope)
         {
+            
             var contextFactory = serviceScope.ServiceProvider.GetRequiredService<IDesignTimeDbContextFactory<ApplicationDbContext>>();
             var contextTransactionService = contextFactory.CreateDbContext(null);
 
@@ -74,28 +75,54 @@ namespace AuthenticationService.WebApi.Extensions
             {
                 var passwordHasher = serviceScope.ServiceProvider.GetRequiredService<IPasswordHasher<User>>();
                 var password = passwordHasher.HashPassword(DemoData.DemoUser, DemoData.UserInfo.Password);
-                
+
                 DemoData.DemoUser.PasswordHash = password;
 
-                contextTransactionService.Users.Add(DemoData.DemoUser);
-                contextTransactionService.SaveChangesAsync().GetAwaiter().GetResult();
+                var userGateway = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var result = userGateway.CreateAsync(DemoData.DemoUser, DemoData.UserInfo.Password).GetAwaiter().GetResult();
+                if (!result.Succeeded)
+                {
+                    throw new Exception("Couldn't create seed user!");
+                }
 
-                var user = contextTransactionService.Users.FirstOrDefault();
-                contextTransactionService.UserClaims.AddRange(
-                    new System.Security.Claims.Claim[] {
+                var user = userGateway.FindByNameAsync(DemoData.DemoUser.UserName).GetAwaiter().GetResult();
+
+                result = userGateway.AddClaimsAsync(user, new System.Security.Claims.Claim[] {
                         new System.Security.Claims.Claim(JwtClaimTypes.Name, DemoData.UserInfo.Name),
                         new System.Security.Claims.Claim(JwtClaimTypes.GivenName, DemoData.UserInfo.GivenName),
                         new System.Security.Claims.Claim(JwtClaimTypes.FamilyName, DemoData.UserInfo.FamilyName),
                         new System.Security.Claims.Claim(JwtClaimTypes.Email, DemoData.UserInfo.Email),
                         new System.Security.Claims.Claim(JwtClaimTypes.EmailVerified, DemoData.UserInfo.EmailVerified)
-                    }.Select(x => new IdentityUserClaim<Guid> {
-                        ClaimType = x.Type,
-                        ClaimValue = x.Value,
-                        UserId = user.Id
-                    })
-                );
+                    }).GetAwaiter().GetResult();
 
-                contextTransactionService.SaveChangesAsync().GetAwaiter().GetResult();
+                if (!result.Succeeded) {
+                    var rollbackResult = userGateway.DeleteAsync(user).GetAwaiter().GetResult();
+                    
+                    if (!rollbackResult.Succeeded)
+                        throw new Exception("Failed to rollback seed of demo user, while failed associate demo user claims!");
+
+                    throw new Exception($"Couldn't associate user claims for user {user.UserName}!");
+                }
+
+                //contextTransactionService.Users.Add(DemoData.DemoUser);
+                //contextTransactionService.SaveChangesAsync().GetAwaiter().GetResult();
+
+                //var user = contextTransactionService.Users.FirstOrDefault();
+                //contextTransactionService.UserClaims.AddRange(
+                //    new System.Security.Claims.Claim[] {
+                //        new System.Security.Claims.Claim(JwtClaimTypes.Name, DemoData.UserInfo.Name),
+                //        new System.Security.Claims.Claim(JwtClaimTypes.GivenName, DemoData.UserInfo.GivenName),
+                //        new System.Security.Claims.Claim(JwtClaimTypes.FamilyName, DemoData.UserInfo.FamilyName),
+                //        new System.Security.Claims.Claim(JwtClaimTypes.Email, DemoData.UserInfo.Email),
+                //        new System.Security.Claims.Claim(JwtClaimTypes.EmailVerified, DemoData.UserInfo.EmailVerified)
+                //    }.Select(x => new IdentityUserClaim<Guid> {
+                //        ClaimType = x.Type,
+                //        ClaimValue = x.Value,
+                //        UserId = user.Id
+                //    })
+                //);
+
+                //contextTransactionService.SaveChangesAsync().GetAwaiter().GetResult();
             }
         }
 

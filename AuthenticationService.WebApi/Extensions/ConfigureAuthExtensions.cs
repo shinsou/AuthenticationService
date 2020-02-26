@@ -46,32 +46,24 @@ namespace AuthenticationService.WebApi.Extensions
                         opt.Events.RaiseSuccessEvents = true;
                     })
                     //.AddEnvironmentBasedSigningCredential(environment, configuration)
-                    .AddConfigurationStore(options =>
-                    {
-                        options.ConfigureDbContext = builder =>
-                            builder.UseNpgsql(dbSettings.ConnectionString,
-                                sql => sql.MigrationsAssembly(dbSettings.DatabaseInstanceName));
-                    })
-                    .AddOperationalStore(options =>
-                    {
+                    .AddConfigurationStore(options => SetupConfigurationStoreOptions(options, dbSettings))
+                    .AddOperationalStore(options => {
                         options.RedisConnectionString = redisSettings.GetConnectionString();
                         options.KeyPrefix = "ops_";
                     })
-                    .AddRedisCaching(options =>
-                    {
-                        options.RedisConnectionString = redisSettings.GetConnectionString();
-                        options.KeyPrefix = "redis_";
-                    })
+                    .AddRedisCaching(options => SetupRedisCachingOptions(options, redisSettings))
                     .AddAspNetIdentity<User>()
                     ;
 
-            //services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-            services.AddAuthentication(options => {
-                        options.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-                        options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-                        options.DefaultSignInScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-                    })
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                // commented code below, settings => unnecessary; and will cause problems if defined in this way, such as Cookie authentication not applied at all!
+            //services.AddAuthentication(options => {
+            //            options.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+            //            options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+            //            options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+            //            options.DefaultSignInScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+            //        })
+                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
                     {
                         options.Audience = "https://localhost:5001";
@@ -79,17 +71,26 @@ namespace AuthenticationService.WebApi.Extensions
                         options.RequireHttpsMetadata = true;
                         options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters();
                     })
-                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddMultipleOpenIdConnect(authSettings); // allow multiple providers defined in settings => iterate and add all
             
             services.ConfigureApplicationCookie(options => {
                 options.LoginPath = "/Login";
                 options.LogoutPath = "/Logout";
+
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    //context.Response.StatusCode == StatusCodes.Status401Unauthorized
+                    return Task.CompletedTask;
+                };
+
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(authSettings.SessionExpirationMinutes);
             });
             
 
             return services;
         }
+
+        #region Private methods
 
         public static IServiceCollection AddAuthorization(this IServiceCollection services, IConfiguration configuration)
         {
@@ -97,5 +98,20 @@ namespace AuthenticationService.WebApi.Extensions
 
             return services;
         }
+
+        private static void SetupConfigurationStoreOptions(IdentityServer4.EntityFramework.Options.ConfigurationStoreOptions options, DatabaseSettings dbSettings)
+        {
+            options.ConfigureDbContext = builder =>
+                builder.UseNpgsql(dbSettings.ConnectionString,
+                    sql => sql.MigrationsAssembly(dbSettings.DatabaseInstanceName));
+        }
+
+        private static void SetupRedisCachingOptions(IdentityServer4.Contrib.RedisStore.RedisCacheOptions options, RedisSettings redisSettings)
+        {
+            options.RedisConnectionString = redisSettings.GetConnectionString();
+            options.KeyPrefix = "redis_";
+        }
+
+        #endregion
     }
 }

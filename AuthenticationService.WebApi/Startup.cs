@@ -56,6 +56,8 @@ namespace AuthenticationService.WebApi
 
             });
 
+            services.AddHttpContextAccessor();
+
             this.Logger.Information("Configure {settings} options into services configurations", "ForwardedHeaders");
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -113,6 +115,9 @@ namespace AuthenticationService.WebApi
 
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Authorization");
             app.UseAuthorization();
+
+            this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Session");
+            app.UseSession();
 
             this.Logger.Information("Configure {middleware} middleware to be used in application builder", "Endpoints");
             app.UseEndpoints(endpoints =>

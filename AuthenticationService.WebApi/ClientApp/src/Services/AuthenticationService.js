@@ -21,37 +21,56 @@ const getSession = async () =>
     await Gateway
         .get('/session')
         .then(resp => {
-            sessionObject$.subscribe(resp);
+            if(resp){
+                sessionObject$.subscribe(resp);
+            }
             return resp;
+        }).catch(err => {
+            debugger;
         });
 
-const signIn = async ({ username, password, csrfToken }) => 
-    await Gateway.post('/login', JSON.stringify({username, password}), csrfToken)
-        .then(user => {
-            localStorage.setItem('session', user);
-            sessionObject$.next(user);
+const signIn = async ({ username, password, rememberLogin, returnUrl, csrfToken }) => 
+    await Gateway.post('/login', JSON.stringify({username, password, rememberLogin, returnUrl}), csrfToken)
+        .then(loginResponse => loginResponse)
+        .then(loginResponse => getSession()
+            .then(sessionResponse => {
+                if(sessionResponse){
+                    localStorage.setItem('session', JSON.stringify(sessionResponse));
+                    sessionObject$.next(sessionResponse);
+                }
 
-            return user;
-        })
+                return loginResponse;
+            }))
+        .catch(err => {
+            return err;
+        });
 
 const signOut = () => {
     return true;
 }
 
-// const isExpired = async () => {
-//     let session = await getSession();
-//     let result = session && session.expires > Date.now();
+const isExpired = () =>
+    getSession()
+        .then(sessionResponse =>
+            sessionResponse 
+                ? false
+                : true)
+        .catch(err => {
+            debugger;
+        })
 
-//     if(!result) {
-//         localStorage.removeItem('session');
-//     }
-// debugger;
-//     return !result
-// }
+const isAuthenticated = () => {
+    let hasActiveSession = sessionObject$.value != null;
+    if(!hasActiveSession)
+        return Promise.resolve(false);
 
-// const isAuthenticated = async () =>
-//     await isExpired()
-    
+    return isExpired()
+    .then(expired => {
+        return sessionObject$.value && !expired
+            ? true
+            : false;
+    });
+}
 
 export const AuthenticationService = {
     session: sessionObject$.asObservable(),
@@ -61,5 +80,5 @@ export const AuthenticationService = {
     signIn,
     signOut,
     //isExpired,
-    //isAuthenticated
+    isAuthenticated
 }
