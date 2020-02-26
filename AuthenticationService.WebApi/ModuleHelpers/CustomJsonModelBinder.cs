@@ -13,7 +13,7 @@ namespace AuthenticationService.WebApi.ModuleHelpers
     public class CustomJsonModelBinder : IModelBinder
     {
         public async Task<T> Bind<T>(HttpRequest request)
-            => await Bind<T>(request, true);
+            => await Bind<T>(request, false);
 
         /// <summary>
         /// Custom json model binder for override default binder
@@ -26,9 +26,19 @@ namespace AuthenticationService.WebApi.ModuleHelpers
         {
             var loggerFactory = (ILoggerFactory)request.HttpContext.RequestServices.GetService(typeof(ILoggerFactory));
             var logger = loggerFactory.CreateLogger<CustomJsonModelBinder>();
+
+            // enable request body for multiple reads
+            request.EnableBuffering();
+
             try
             {
-                var result = await JsonSerializer.DeserializeAsync<T>(request.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = caseSensitive });
+                using var streamReader = new StreamReader(request.Body);
+                var jsonResult = await streamReader.ReadToEndAsync();
+                
+                // reset stream position
+                request.Body.Position = 0;
+
+                var result = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(jsonResult);
 
                 return result;
             }

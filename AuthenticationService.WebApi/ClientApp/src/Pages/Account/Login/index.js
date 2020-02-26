@@ -87,14 +87,34 @@ export default class Login extends Component {
             {
                 username: this.state.username,
                 password: this.state.password,
+                rememberLogin: this.state.rememberMe,
+                returnUrl: this.state.returnUrl,
                 csrfToken: this.state.antiforgeryToken
             })
             .then(result => {
                 debugger;
-                if(result)
-                    window.location.pathname = "/";
-                //else
-                    // show error
+                if(!result)
+                {
+                    debugger;
+                    // something went wront, no result received!
+                    return;
+                }
+
+                if(result.message && result.message.length > 0)
+                {
+                    debugger;
+                    // error occured, lets display the message!
+                    return;
+                }
+
+                // all's good, let's see if we have redirectUri where to redirect user
+                if(result.redirectUri && result.redirectUri.length > 0){
+                    window.location.pathname = result.redirectUri;
+                    return;
+                }
+                
+                // okay, this awkward.. we didn't get redirect uri?!
+                throw new Error("Login response didn't contain redirect uri! We don't know where to redirect user; one may be interested in what's going on in the backend logs!");
             })
     }
 

@@ -14,6 +14,8 @@ namespace AuthenticationService.Application.Settings
             this.Configuration = configuration;
         }
 
+        public int SessionExpirationMinutes => this.Configuration.GetValue<int>("Authentication:SessionExpirationMinutes");
+
         public List<AuthenticationProviderSettings> Providers
             => this.Configuration
                 .GetSection("Authentication:Providers")

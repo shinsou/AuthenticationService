@@ -8,17 +8,16 @@ using System.Threading.Tasks;
 
 namespace AuthenticationService.WebApi.Modules.v1.Session
 {
-    public class SessionModule : VersionModule
+    public class GetUserSessionModule : VersionModule
     {
-        public SessionModule() : base("/session")
+        public GetUserSessionModule() : base("/session")
         {
             this.RequiresAuthorization();
 
             Get("/", async (req, res) =>
             {
-                var user = req.HttpContext.User;
-                
-                await res.Negotiate(user);
+                var userClaims = req.HttpContext.User.Claims;
+                await res.Negotiate(userClaims.Select(item => new { item.Type, item.Value }));
             });
         }
     }

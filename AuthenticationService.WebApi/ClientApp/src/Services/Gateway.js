@@ -1,3 +1,4 @@
+import { AuthenticationService } from './AuthenticationService';
 
 const apiVersion = "v1";
 const baseApiUri = new URL(`${process.env.PUBLIC_URL}/api/${apiVersion}`, window.location);
@@ -14,11 +15,17 @@ const get = (path) =>
     })
     .then(async resp => {
         if(resp.ok){
-            return await resp.json();
+            try{
+            return await resp.clone().json();
+            }catch(err){
+                let test = await resp.clone().text();
+                debugger;
+            }
         } else {
             throw resp;
         }
     }).catch(err => {
+        debugger;
         console.log(err);
         switch(err.status){
             case 301:
@@ -33,6 +40,7 @@ const get = (path) =>
             case 401:
             case 403: 
                 console.log(err.statusText);
+                AuthenticationService.signOut();
                 return null;
             default:
                 return null;
@@ -49,10 +57,10 @@ const post = (path, body, csrfToken) =>
         }),
         body: body,
     })
-    .then(response =>
-        response
-            .text()
-            .then(text =>{
+    .then(response => {
+        if(response && response.status == 200){
+            return response.text().then(text => {
+                debugger;
                 const data = text && JSON.parse(text)
                 if(response.ok){
                     return data;
@@ -65,16 +73,24 @@ const post = (path, body, csrfToken) =>
                 const error = (data && data.message) || response.statusText;
                 return error;
             })
-    )
+        }
+        
+        debugger;
+    })
+    .catch(err => {
+        debugger;
+    });
 
 // remove any null/undefined keys from headers; as there's not point delivering such properties
-const cleanupHeadersForBlanks = (headerObject) =>
+const cleanupHeadersForBlanks = (headerObject) =>{
     Object
         .keys(headerObject)
         .forEach((key) => (
             headerObject[key] === null
          || headerObject[key] === undefined)
         && delete headerObject[key]);
+    return headerObject;
+}
 
 export const Gateway = {
     get,

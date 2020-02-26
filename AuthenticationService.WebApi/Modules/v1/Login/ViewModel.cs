@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AuthenticationService.WebApi.Modules.v1.Login
@@ -33,12 +34,17 @@ namespace AuthenticationService.WebApi.Modules.v1.Login
         /// </summary>
         public string Password { get; set; }
         /// <summary>
+        /// Return message for UI
+        /// </summary>
+        public string Message { get; set; }
+        /// <summary>
         /// Defineds default state for login view to remember credentials next time
         /// </summary>
         public bool RememberLogin { get; set; }
 
         [Newtonsoft.Json.JsonProperty("__RequestVerificationToken")]
         public string RequestVerificationToken { get; set; }
+        public ClaimsPrincipal Identity { get; set; }
 
         public ViewModel() { }
 
@@ -50,6 +56,7 @@ namespace AuthenticationService.WebApi.Modules.v1.Login
             this.RememberLogin = input.RememberLogin;
             this.ReturnUrl = input.ReturnUrl;
             this.Username = input.Username;
+            this.Message = input.Message;
         }
     }
 }
