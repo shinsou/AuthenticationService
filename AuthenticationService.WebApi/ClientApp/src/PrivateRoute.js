@@ -47,40 +47,9 @@ class PrivateRoute extends Component {
                             : (<Redirect to={{ pathname: '/login', state: { from:  this.props.location} }} />)
                     }
                 }
-                />
+            />
         )
-
-        // if(!isAuthenticated)
-        // {
-        //     return (<Redirect to={{ pathname: '/login', state: { from:  this.state.props.location} }} />);
-        // }
-
-        // return (<Component {...this.state.props} />)
     }
 }
-
-// const PrivateRoute = ({component: Component, ...rest}) => {
-//     return (
-//         <Route
-//             {...rest}
-//             render = {
-//                 props => {
-//                     // do authentication
-//                     let da = AuthenticationService.isAuthenticated();
-//                     const session = AuthenticationService.sessionValue;
-//                     debugger;
-//                     if(!session){
-//                         return <Redirect to={{ pathname: '/login', state: { from:  props.location} }} />
-//                     }
-
-//                     // do authorization
-
-//                     return <Component {...props} />
-//                 }
-
-//             }
-//         />
-//     )
-// };
 
 export default PrivateRoute;
