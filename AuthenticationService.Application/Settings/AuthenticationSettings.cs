@@ -19,7 +19,7 @@ namespace AuthenticationService.Application.Settings
         public List<AuthenticationProviderSettings> Providers
             => this.Configuration
                 .GetSection("Authentication:Providers")
-                ?.Get<List<AuthenticationProviderSettings>>();
+                ?.Get<List<AuthenticationProviderSettings>>() ?? new List<AuthenticationProviderSettings>();
     }
 
     public class AuthenticationProviderSettings
