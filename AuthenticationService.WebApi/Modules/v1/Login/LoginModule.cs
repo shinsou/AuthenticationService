@@ -46,10 +46,6 @@ namespace AuthenticationService.WebApi.Modules.v1.Login
                 if (req.HttpContext.User.IsAuthenticated()) {
                     this.Logger.LogDebug($"Session stated as already authenticated for user [{req.HttpContext.User.Identity.Name}]");
 
-                    //res.Redirect(String.IsNullOrWhiteSpace(returnUrl)
-                    //    ? "/"
-                    //    : returnUrl);
-
                     var test = req.HttpContext.Session;
 
                     await res.Negotiate(new ViewModel
