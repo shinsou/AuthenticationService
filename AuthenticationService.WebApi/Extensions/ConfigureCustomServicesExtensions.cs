@@ -23,6 +23,8 @@ namespace AuthenticationService.WebApi.Extensions
         {
             services.AddScoped<ILdapGateway<User>, LdapGateway>();
             services.AddScoped<IAuditRepository<UserAudit>, AuditRepository>();
+            services.AddScoped<IClientRepository, ClientRepository>();
+
             services.AddScoped<UserStore<User, Role, ApplicationDbContext, Guid>, UserRepository>();
             services.AddScoped<UserManager<User>, UserGateway>();
             services.AddScoped<RoleStore<Role, ApplicationDbContext, Guid>, RoleRepository>();
