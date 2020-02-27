@@ -31,13 +31,22 @@ namespace AuthenticationService.Application.Settings
 
         public string GetConnectionString()
         {
-            var url = $"{this.Host + ":" + this.Port}, abortConnect={this.AbortConnect}, allowAdmin={this.AllowAdmin}";
+            var url = $"{this.Host + ":" + this.Port}, abortConnect={this.AbortConnect}, allowAdmin={this.AllowAdmin} {SetPasswordToConnStringIfPresented(this.Password)}";
 
             if (!String.IsNullOrWhiteSpace(this.Password))
                 url += $", password={this.Password}";
 
             return url;
         }
+
+        #endregion
+
+        #region Private methods
+
+        private string SetPasswordToConnStringIfPresented(string password)
+            => !String.IsNullOrWhiteSpace(password)
+                ? $", password={password}"
+                : "";
 
         #endregion
     }
