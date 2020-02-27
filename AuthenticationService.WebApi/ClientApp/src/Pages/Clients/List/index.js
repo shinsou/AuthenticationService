@@ -82,7 +82,6 @@ export default class ListClients extends Component {
         ClientGateway.getClients()
             .then(result => {
                 if(result && Array.isArray(result)) {
-                    //self.state.clients = result;
                     this.setState({clients: result});
                 }
             });
@@ -102,7 +101,7 @@ export default class ListClients extends Component {
                         <PageTitle
                             heading="Auth clients"
                             subheading="Display authenticate service associated client applications/services"
-                            icon="pe-7s-albums icon-gradient bg-mean-fruit"
+                            icon="pe-7s-browser icon-gradient bg-mean-fruit"
                         />
                         <Row>
                             <Col md="12">
