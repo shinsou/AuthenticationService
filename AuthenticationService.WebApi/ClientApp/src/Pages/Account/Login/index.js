@@ -7,11 +7,27 @@ import bg1 from '../../../assets/utils/images/originals/1673477.jpg';
 import bg2 from '../../../assets/utils/images/originals/1673364.png';
 import bg3 from '../../../assets/utils/images/originals/1673318.jpg';
 
+import {
+    toast,
+    Bounce
+} from 'react-toastify';
+
 import {Col, Row, Button, Form, FormGroup, Label, Input} from 'reactstrap';
 
 class LocalLogin extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            username: this.props.username,
+            password: this.props.password,
+            rememberme: this.props.rememberMe,
+
+            onchange: this.props.handleChange,
+            onsubmit: this.props.handleSubmit,
+
+            message: this.props.message
+        };
     }
 
     render(){
@@ -69,11 +85,23 @@ export default class Login extends Component {
             providers: [],
             returnUrl: '',
             enableLocalLogin: true,
-            antiforgeryToken: null
+            antiforgeryToken: null,
+            message: null
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    showLoginMessage() {
+        //
+        toast(this.state.message, {
+            transition: Bounce,
+            closeButton: true,
+            autoClose: 5000,
+            position: 'top-center',
+            type: 'error'
+        });
     }
 
     handleChange(event) {
@@ -97,6 +125,8 @@ export default class Login extends Component {
                 {
                     debugger;
                     // something went wront, no result received!
+                    this.setState({message: 'Something went really bad with login request!\nPlease contact support.'});
+                    this.showLoginMessage();
                     return;
                 }
 
@@ -104,6 +134,8 @@ export default class Login extends Component {
                 {
                     debugger;
                     // error occured, lets display the message!
+                    this.setState({message: result.message});
+                    this.showLoginMessage();
                     return;
                 }
 
