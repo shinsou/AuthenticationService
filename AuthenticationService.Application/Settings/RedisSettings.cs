@@ -16,6 +16,7 @@ namespace AuthenticationService.Application.Settings
 
         #region Public properties
 
+        public bool Ssl => this.Configuration.GetValue<bool?>("redis:Ssl") ?? true;
         public bool AllowAdmin => this.Configuration.GetValue<bool?>("Redis:AllowAdmin") ?? true;
         public bool AbortConnect => this.Configuration.GetValue<bool?>("Redis:AbortConnection") ?? false;
         public string AppName => this.Configuration.GetValue<string>("Redis:AppName");
@@ -31,10 +32,15 @@ namespace AuthenticationService.Application.Settings
 
         public string GetConnectionString()
         {
-            var url = $"{this.Host + ":" + this.Port}, abortConnect={this.AbortConnect}, allowAdmin={this.AllowAdmin} {SetPasswordToConnStringIfPresented(this.Password)}";
+            var stringBuilder = new StringBuilder($"{this.Host + ":" + this.Port}");
+            stringBuilder.Append($",abortConnect={this.AbortConnect}");
+            stringBuilder.Append($",allowAdmin={this.AllowAdmin}");
+            stringBuilder.Append($",ssl={this.Ssl}");
+            if (!String.IsNullOrWhiteSpace(this.Password)) {
+                stringBuilder.Append($",password={this.Password}");
+            }
 
-            if (!String.IsNullOrWhiteSpace(this.Password))
-                url += $", password={this.Password}";
+            var url = stringBuilder.ToString();
 
             return url;
         }
@@ -46,6 +52,11 @@ namespace AuthenticationService.Application.Settings
         private string SetPasswordToConnStringIfPresented(string password)
             => !String.IsNullOrWhiteSpace(password)
                 ? $", password={password}"
+                : "";
+
+        private string SetSslToConnectionStringIfPresented(bool? ssl)
+            => ssl != null
+                ? $", ssl={ssl}"
                 : "";
 
         #endregion
