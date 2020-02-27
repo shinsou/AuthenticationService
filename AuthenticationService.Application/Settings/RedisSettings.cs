@@ -19,6 +19,7 @@ namespace AuthenticationService.Application.Settings
         public bool AllowAdmin => this.Configuration.GetValue<bool?>("Redis:AllowAdmin") ?? true;
         public bool AbortConnect => this.Configuration.GetValue<bool?>("Redis:AbortConnection") ?? false;
         public string AppName => this.Configuration.GetValue<string>("Redis:AppName");
+        public string Username => this.Configuration.GetValue<string>("Redis:Username");
         public string Password => this.Configuration.GetValue<string>("Redis:Password");
         public string Host => this.Configuration.GetValue<string>("Redis:Host");
         public string DataProtectionKeyName => this.Configuration.GetValue<string>("Redis:DataProtectionKeyName");
