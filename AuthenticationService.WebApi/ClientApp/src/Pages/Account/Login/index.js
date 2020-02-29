@@ -1,8 +1,12 @@
 import React, {Fragment, Component} from "react";
 import { AuthenticationService } from '../../../Services/AuthenticationService';
 import Slider from "react-slick";
+import BlockUi from 'react-block-ui';
+import 'react-block-ui/style.css';
 import FloatingLabel from "floating-label-react";
+
 import "floating-label-react/styles.css";
+
 import bg1 from '../../../assets/utils/images/originals/1673477.jpg';
 import bg2 from '../../../assets/utils/images/originals/1673364.png';
 import bg3 from '../../../assets/utils/images/originals/1673318.jpg';
@@ -12,7 +16,17 @@ import {
     Bounce
 } from 'react-toastify';
 
-import {Col, Row, Button, Form, FormGroup, Label, Input} from 'reactstrap';
+import {
+    Col,
+    Row,
+    Button,
+    Form,
+    FormGroup,
+    Label,
+    Input
+} from 'reactstrap';
+
+// =======================================================
 
 class LocalLogin extends Component {
     constructor(props) {
@@ -72,6 +86,17 @@ class LocalLogin extends Component {
     }
 }
 
+class LoginBlockerLoader extends Component {
+    render() {
+        return(
+            <div className="ball-clip-rotate-multiple">
+                <div></div>
+                <div></div>
+            </div>
+        );
+    }
+}
+
 
 export default class Login extends Component {
     constructor(props){
@@ -86,7 +111,9 @@ export default class Login extends Component {
             returnUrl: '',
             enableLocalLogin: true,
             antiforgeryToken: null,
-            message: null
+            message: null,
+
+            blocking: false
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -110,7 +137,9 @@ export default class Login extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        
+        debugger;
+        this.setState({blocking: !this.state.blocking});
+
         AuthenticationService.signIn(
             {
                 username: this.state.username,
@@ -121,6 +150,7 @@ export default class Login extends Component {
             })
             .then(result => {
                 debugger;
+                this.setState({blocking: !this.state.blocking});
                 if(!result)
                 {
                     debugger;
@@ -226,14 +256,16 @@ export default class Login extends Component {
                         </Col>
                         <Col lg="4" md="12" className="h-100 d-flex bg-white justify-content-center align-items-center">
                             <Col sm="11" className="mx-auto app-login-box">
-                                <div className="app-logo"/>
-                                <Row className="divider"/>
-                                {(!this.state.enableLocalLogin && (this.state.providers || this.state.providers.length === 0))
-                                    ?
-                                        <div>There's no associated login providers nor local login is permitted for this client!</div>
-                                    :
-                                        <LocalLogin handleChange={this.handleChange} handleSubmit={this.handleSubmit} {...this.state} />
-                                }
+                                            <BlockUi tag="div" blocking={this.state.blocking} loader={<LoginBlockerLoader />}>
+                                    <div className="app-logo"/>
+                                    <Row className="divider"/>
+                                    {(!this.state.enableLocalLogin && (this.state.providers || this.state.providers.length === 0))
+                                        ?
+                                            <div>There's no associated login providers nor local login is permitted for this client!</div>
+                                        :
+                                            <LocalLogin handleChange={this.handleChange} handleSubmit={this.handleSubmit} {...this.state} />
+                                    }
+                                </BlockUi>
                             </Col>
                         </Col>
                     </Row>
