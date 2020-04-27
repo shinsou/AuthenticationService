@@ -1,4 +1,5 @@
 # Overview
+[![Build Status](https://kaikko.visualstudio.com/AuthenticationService/_apis/build/status/capsule-auth%20-%20CI?branchName=master)](https://kaikko.visualstudio.com/AuthenticationService/_build/latest?definitionId=3&branchName=master)
 
 #### TL;DR
 
