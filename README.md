@@ -192,4 +192,4 @@ Run
   - This is by design. Just you know when you try to run this from CLI with these commands.
     (if you do: change service configurations in manner where you expect your platform to be either development or production; i.e. do not expect env.vars. to do this for you)
   - When running from Visual Studio, this is not a problem. (not sure why)
-- 
+- `Secure` flag not applied in cookies (will have effect on login functionality)
