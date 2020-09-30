@@ -16,4 +16,5 @@ stages:
       include:
       - push
 timeout: 60
+branch: {}
 notification: {}
