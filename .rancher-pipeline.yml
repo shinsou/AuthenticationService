@@ -1,2 +1,11 @@
+stages:
+- name: Build & Publish
+  steps:
+  - publishImageConfig:
+      dockerfilePath: ./AuthenticationService.WebApi/Dockerfile
+      buildContext: .
+      tag: authenticationservice:latest
+      pushRemote: true
+      registry: localhost:5000
 timeout: 60
 notification: {}
