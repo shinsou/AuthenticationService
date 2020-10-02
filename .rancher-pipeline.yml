@@ -5,7 +5,6 @@ stages:
       dockerfilePath: ./AuthenticationService.WebApi/Dockerfile
       buildContext: .
       tag: AuthenticationService:latest
-      pushRemote: true
       registry: 127.0.0.1:34066
     when:
       event:
