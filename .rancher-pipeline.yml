@@ -6,7 +6,7 @@ stages:
       buildContext: .
       tag: AuthenticationService:latest
       pushRemote: true
-      registry: 127.0.0.1:34938
+      registry: 127.0.0.1:34066
     when:
       event:
         include:
