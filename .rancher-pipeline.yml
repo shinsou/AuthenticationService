@@ -1,5 +1,5 @@
 stages:
-- name: demo
+- name: Publish & Build image
   steps:
   - publishImageConfig:
       dockerfilePath: ./AuthenticationService.WebApi/Dockerfile
