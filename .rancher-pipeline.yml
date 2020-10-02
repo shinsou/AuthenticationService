@@ -7,12 +7,5 @@ stages:
       tag: authenticationservice:latest
       pushRemote: true
       registry: localhost:5000
-    when:
-      event: {}
-  when:
-    event:
-      include:
-      - push
 timeout: 60
-branch: {}
 notification: {}
