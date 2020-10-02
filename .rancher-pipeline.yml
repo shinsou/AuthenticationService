@@ -4,12 +4,10 @@ stages:
   - publishImageConfig:
       dockerfilePath: ./AuthenticationService.WebApi/Dockerfile
       buildContext: .
-      tag: AuthenticationService:latest
+      tag: authenticationservice:latest
       registry: 127.0.0.1:34066
     when:
-      event:
-        include:
-        - push
+      event: {}
   when:
     event:
       include:
