@@ -6,6 +6,6 @@ stages:
       buildContext: .
       tag: authenticationservice:latest
       pushRemote: true
-      registry: 192.168.1.233:5000
+      registry: nexus:9083
 timeout: 60
 notification: {}
